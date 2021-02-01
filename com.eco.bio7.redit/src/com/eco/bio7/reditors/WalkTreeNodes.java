@@ -82,6 +82,7 @@ public class WalkTreeNodes extends WorkspaceJob {
 					}
 
 					contentOutlineViewer.getTree().setRedraw(true);
+					contentOutlineViewer.getTree().redraw();
 
 				}
 

@@ -749,7 +749,7 @@ public class REditor extends TextEditor implements IPropertyChangeListener, Upda
 
 	};
 
-	private static void goToLine(IEditorPart editorPart, int toLine) {
+	private void goToLine(IEditorPart editorPart, int toLine) {
 		if ((editorPart instanceof REditor) || toLine <= 0) {
 
 			ITextEditor editor = (ITextEditor) editorPart;
@@ -768,7 +768,14 @@ public class REditor extends TextEditor implements IPropertyChangeListener, Upda
 
 					}
 					if (region != null) {
-						editor.selectAndReveal(region.getOffset(), region.getLength());
+						//editor.selectAndReveal(region.getOffset(), region.getLength());
+						ISourceViewer sourceViewer = getSourceViewer();
+						int offset = region.getOffset();
+						sourceViewer.revealRange(offset, region.getLength());
+						StyledText textWidget = sourceViewer.getTextWidget();
+						textWidget.setSelection(offset, offset+region.getLength());
+						editor.selectAndReveal(offset, 0);
+						textWidget.redraw();
 					}
 				}
 			}
