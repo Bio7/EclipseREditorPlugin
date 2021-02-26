@@ -20,7 +20,17 @@ import org.eclipse.ui.IWorkbenchWindow;
 import com.eco.bio7.util.Util;
 
 public class OpenFileCreateSourceTemplate {
-	public IWorkbenchWindow window;
+	private IWorkbenchWindow window;
+	private String extension = null;
+	private String filePath = null;
+
+	public String getExtension() {
+		return extension;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
 
 	public OpenFileCreateSourceTemplate(IDocument doc, int offset, int length) {
 
@@ -29,7 +39,7 @@ public class OpenFileCreateSourceTemplate {
 
 		/* For multiple extensions for one filetype, semicolon can be used! */
 		String[] filterExt = { "*.*", "*.RData", "*.txt", "*.csv", "*.xls", "*.xlsx", "*.json", "*.xml", "*.sav",
-				"*.dta", "*.syd", "*.arff", "*.mat", "*.mtp", "*.dbf", "*.tif;*.*", "*.shp;*.*" };
+				"*.dta", "*.syd", "*.arff", "*.mat", "*.mtp", "*.dbf", "*.tif;*.jpg;*.jpeg;*.TIFF;*.png","*.shp","*.Rhistory" };
 		fd.setFilterExtensions(filterExt);
 
 		String selected = fd.open();
@@ -71,72 +81,74 @@ public class OpenFileCreateSourceTemplate {
 			if (selected != null) {
 				selected = selected.replace("\\", "/");
 				String fileNameTemp = FilenameUtils.removeExtension(fd.getFileName());
+				extension = "*."+FilenameUtils.getExtension(fd.getFileName());
 				String fileWithoutExt = fd.getFilterPath() + File.separator + fileNameTemp;
 				fileWithoutExt = fileWithoutExt.replace("\\", "/");
-				String dirPath = fd.getFilterPath().replace("\\", "/");
+				//String dirPath = fd.getFilterPath().replace("\\", "/");
 				;
 				try {
-					int selFilter = fd.getFilterIndex();
-					switch (selFilter) {
-					case 0:
+					//int selFilter = fd.getFilterIndex();
+					if (extension.equals(filterExt[0])) {
 						doc.replace(offset, length, selected);
-						break;
-					case 1:
-						doc.replace(offset, length, "dataTxt <- load(\"" + selected + "\")");
-						break;
-					case 2:
+					} 
+					
+					else if (extension.equals(filterExt[1])) {
+						doc.replace(offset, length, "load(\"" + selected + "\")");
+
+					}
+
+					else if (extension.equals(filterExt[2])) {
 						doc.replace(offset, length, "dataTable <- read.table(\"" + selected + "\",header = FALSE)");
-						break;
-					case 3:
+
+					} else if (extension.equals(filterExt[3])) {
 						doc.replace(offset, length, "dataCsv <- read.csv(\"" + selected + "\",header = FALSE)");
-						break;
-					case 4:
+
+					} else if (extension.equals(filterExt[4])) {
 						doc.replace(offset, length, "library(XLConnect);\ndataExcel <- readWorksheetFromFile(\""
 								+ selected + "\",sheet=1)");
-						break;
-					case 5:
+					} else if (extension.equals(filterExt[5])) {
 						doc.replace(offset, length,
 								"library(XLConnect);dataExcel <- readWorksheetFromFile(\"" + selected + "\",sheet=1)");
-						break;
-					case 6:
+					} else if (extension.equals(filterExt[6])) {
 						doc.replace(offset, length, "library(rjson);dataJson <- fromJSON(file =\"" + selected + "\")");
-						break;
-					case 7:
+
+					} else if (extension.equals(filterExt[7])) {
 						doc.replace(offset, length, "library(XML);dataXml <- xmlTreeParse(\"" + selected + "\")");
-						break;
-					case 8:
+
+					} else if (extension.equals(filterExt[8])) {
 						doc.replace(offset, length, "library(foreign);dataSpss <- read.spss(\"" + selected
 								+ "\",to.data.frame=TRUE,use.value.labels=FALSE)");
-						break;
-					case 9:
+					} else if (extension.equals(filterExt[9])) {
 						doc.replace(offset, length, "library(foreign);dataStata <- read.dta(\"" + selected + "\")");
-						break;
-					case 10:
+
+					} else if (extension.equals(filterExt[10])) {
 						doc.replace(offset, length,
 								"library(foreign);dataSystat <- read.sysstat(\"" + selected + "\")");
-						break;
-					case 11:
+					} else if (extension.equals(filterExt[11])) {
 						doc.replace(offset, length, "library(foreign);dataWeka <- read.arff(\"" + selected + "\")");
-						break;
-					case 12:
+
+					} else if (extension.equals(filterExt[12])) {
 						doc.replace(offset, length, "library(foreign);dataOctave <- read.octave(\"" + selected + "\")");
-						break;
-					case 13:
+
+					} else if (extension.equals(filterExt[13])) {
 						doc.replace(offset, length, "library(foreign);dataFile <- read.mtp(\"" + selected + "\")");
-						break;
-					case 14:
+
+					} else if (extension.equals(filterExt[14])) {
 						doc.replace(offset, length,
 								"library(foreign);dataDbf <- read.dbf(\"" + selected + "\",as.is = FALSE)");
-						break;
-					case 15:
+					/*Multi display in dialog array : filterExt[15]*/	
+					} else if (extension.equals("*.tif")||extension.equals("*.TIFF")||extension.equals("*.jpg")||extension.equals("*.png")||extension.equals("*.jpeg")) {
 						doc.replace(offset, length, "library(rgdal);dataGdal <- readGDAL(\"" + selected + "\")");
-						break;
-					case 16:
-						doc.replace(offset, length, "library(rgdal);dataGdal <- readOGR(\"" + selected + "\")");
-						break;
 
-					default:
-						break;
+					} else if (extension.equals(filterExt[16])) {
+						doc.replace(offset, length, "library(rgdal);dataGdal <- readOGR(\"" + selected + "\")");
+
+					} else if (extension.equals(filterExt[17])) {
+						extension = "*.Rhistory";
+						filePath = selected;
+					}
+					else {
+						return;
 					}
 
 				} catch (BadLocationException e) {
