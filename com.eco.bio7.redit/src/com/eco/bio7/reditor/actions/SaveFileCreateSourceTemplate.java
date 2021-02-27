@@ -23,6 +23,7 @@ public class SaveFileCreateSourceTemplate {
 
 	private String filePath;
 	private String extension;
+	private String var;
 
 	public String getExtension() {
 		return extension;
@@ -32,12 +33,18 @@ public class SaveFileCreateSourceTemplate {
 		return filePath;
 	}
 
-	public SaveFileCreateSourceTemplate(IDocument doc, int offset, int length) {
+	public SaveFileCreateSourceTemplate(IDocument doc, int offset, int length,String rShellVar) {
+		if(rShellVar!=null) {
+			var=rShellVar;
+		}
+		else {
+			var="";
+		}
 		FileDialog fd = new FileDialog(Util.getShell(), SWT.SAVE);
 		fd.setText("Save");
 
 		/* For multiple extensions for one filetype, semicolon can be used! */
-		String[] filterExt = { "*.*", "*.RData", "*.txt", "*.csv", "*.xls", "*.xlsx", "*.json", "*.xml", "*.sav",
+		String[] filterExt = { "*.*", "*.RData", "*.txt", "*.csv", "*.xls", "*.xlsx", "*.sas", "*.xml", "*.sav",
 				"*.dta", "*.syd", "*.arff", "*.mat", "*.dbf", "*.geotiff", "*.shapefile", "*.Rhistory" };
 		fd.setFilterExtensions(filterExt);
 		String selected = fd.open();
@@ -62,50 +69,51 @@ public class SaveFileCreateSourceTemplate {
 				}
 
 				else if (extension.equals(filterExt[2])) {
-					doc.replace(offset, length, "write(x,file=\"" + selected + "\")");
+					doc.replace(offset, length, "write("+var+",file=\"" + selected + "\")");
 
 				} else if (extension.equals(filterExt[3])) {
-					doc.replace(offset, length, "write.csv(x,\"file=" + selected + "\",row.names = FALSE)");
+					doc.replace(offset, length, "write.csv("+var+",file=\"" + selected + "\",row.names = FALSE)");
 
 				} else if (extension.equals(filterExt[4])) {
-					doc.replace(offset, length, "library(XLConnect);saveWorkbook(wb,\"" + selected + "\")");
+					doc.replace(offset, length, "library(XLConnect);saveWorkbook("+var+",\"" + selected + "\")");
 
 				} else if (extension.equals(filterExt[5])) {
 					doc.replace(offset, length,
-							"library(XLConnect);writeWorksheetToFile(\"" + selected + "\",data=x,sheet = \"mySheet\")");
+							"library(XLConnect);writeWorksheetToFile(\"" + selected + "\",data="+var+",sheet = \"mySheet\")");
 
 				} else if (extension.equals(filterExt[6])) {
-					doc.replace(offset, length, "library(rjson);toJSON((file =\"" + selected + ",method=\"C\"\")");
+					doc.replace(offset, length, "library(foreign);write.foreign("+var+",\"" + fileWithoutExt + ".txt\",\""
+							+ fileWithoutExt + ".sas\",package=\"SAS\")");
 
 				} else if (extension.equals(filterExt[7])) {
-					doc.replace(offset, length, "library(XML);saveXML(doc,file=\"" + selected + "\")");
+					doc.replace(offset, length, "library(XML);saveXML("+var+",file=\"" + selected + "\")");
 
 				} else if (extension.equals(filterExt[8])) {
-					doc.replace(offset, length, "library(foreign);write.foreign(x,\"" + fileWithoutExt + ".txt\",\""
+					doc.replace(offset, length, "library(foreign);write.foreign("+var+",\"" + fileWithoutExt + ".txt\",\""
 							+ fileWithoutExt + ".sps\",package=\"SPSS\")");
 
 				} else if (extension.equals(filterExt[9])) {
-					doc.replace(offset, length, "library(foreign);write.foreign(x,\"" + selected + "\")");
+					doc.replace(offset, length, "library(foreign);write.foreign("+var+",\"" + selected + "\")");
 
 				} else if (extension.equals(filterExt[10])) {
-					doc.replace(offset, length, "library(foreign);write.foreign(x,\"" + fileWithoutExt + ".txt\",\""
+					doc.replace(offset, length, "library(foreign);write.foreign("+var+",\"" + fileWithoutExt + ".txt\",\""
 							+ fileWithoutExt + ".syd\",package=\"Systat\")");
 
 				} else if (extension.equals(filterExt[11])) {
-					doc.replace(offset, length, "library(foreign);write.arff(x,\"" + selected + "\")");
+					doc.replace(offset, length, "library(foreign);write.arff("+var+",\"" + selected + "\")");
 
 				} else if (extension.equals(filterExt[12])) {
-					doc.replace(offset, length, "library(R.matlab);writeMat(\"" + selected + "\",x)");
+					doc.replace(offset, length, "library(R.matlab);writeMat(\"" + selected + "\",x=as.matrix("+var+"))");
 
 				} else if (extension.equals(filterExt[13])) {
-					doc.replace(offset, length, "library(foreign);write.dbf(x,\"" + selected + "\")");
+					doc.replace(offset, length, "library(foreign);write.dbf("+var+",\"" + selected + "\")");
 
 				} else if (extension.equals(filterExt[14])) {
-					doc.replace(offset, length, "library(rgdal);writeGDAL(sp_grid_object, fname =\"" + fileWithoutExt
+					doc.replace(offset, length, "library(rgdal);writeGDAL("+var+", fname =\"" + fileWithoutExt
 							+ ".tif\" , drivername = \"GTiff\", type = \"Float32\")");
 
 				} else if (extension.equals(filterExt[15])) {
-					doc.replace(offset, length, "library(rgdal);writeOGR(sp_poly_object, fname =\"" + dirPath
+					doc.replace(offset, length, "library(rgdal);writeOGR("+var+", fname =\"" + dirPath
 							+ "\" , driver = \"ESRI Shapefile\")");
 
 				} else if (extension.equals(filterExt[16])) {

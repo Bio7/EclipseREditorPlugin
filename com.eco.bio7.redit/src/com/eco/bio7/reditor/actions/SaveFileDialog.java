@@ -44,7 +44,7 @@ public class SaveFileDialog extends Action {
 		int offset = selection.getOffset();
 		int length = selection.getLength();
 		
-		new SaveFileCreateSourceTemplate(doc, offset, length);
+		new SaveFileCreateSourceTemplate(doc, offset, length,null);
 
 	}
 

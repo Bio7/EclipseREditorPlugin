@@ -39,7 +39,7 @@ public class OpenFileCreateSourceTemplate {
 
 		/* For multiple extensions for one filetype, semicolon can be used! */
 		String[] filterExt = { "*.*", "*.RData", "*.txt", "*.csv", "*.xls", "*.xlsx", "*.json", "*.xml", "*.sav",
-				"*.dta", "*.syd", "*.arff", "*.mat", "*.mtp", "*.dbf", "*.tif;*.jpg;*.jpeg;*.TIFF;*.png","*.shp","*.Rhistory" };
+				"*.dta", "*.syd", "*.arff", "*.mat", "*.mtp", "*.dbf", "*.tif;*.tiff;*.jpg;*.jpeg;*.TIFF;*.png","*.shp","*.Rhistory" };
 		fd.setFilterExtensions(filterExt);
 
 		String selected = fd.open();
@@ -137,7 +137,7 @@ public class OpenFileCreateSourceTemplate {
 						doc.replace(offset, length,
 								"library(foreign);dataDbf <- read.dbf(\"" + selected + "\",as.is = FALSE)");
 					/*Multi display in dialog array : filterExt[15]*/	
-					} else if (extension.equals("*.tif")||extension.equals("*.TIFF")||extension.equals("*.jpg")||extension.equals("*.png")||extension.equals("*.jpeg")) {
+					} else if (extension.equals("*.tif")||extension.equals("*.tiff")||extension.equals("*.TIFF")||extension.equals("*.jpg")||extension.equals("*.png")||extension.equals("*.jpeg")) {
 						doc.replace(offset, length, "library(rgdal);dataGdal <- readGDAL(\"" + selected + "\")");
 
 					} else if (extension.equals(filterExt[16])) {
