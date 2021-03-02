@@ -905,6 +905,7 @@ public class REditor extends TextEditor implements IPropertyChangeListener, Upda
 					} finally {
 						tree.setRedraw(true);
 					}
+					tree.redraw();
 				}
 
 			};
@@ -924,6 +925,7 @@ public class REditor extends TextEditor implements IPropertyChangeListener, Upda
 					} finally {
 						tree.setRedraw(true);
 					}
+					tree.redraw();
 				}
 
 			};
