@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -50,6 +51,7 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
@@ -59,7 +61,9 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener2;
@@ -872,11 +876,63 @@ public class REditor extends TextEditor implements IPropertyChangeListener, Upda
 	}
 
 	class MyContentOutlinePage extends ContentOutlinePage {
-
+		boolean sort = true;
 		public void createControl(Composite parent) {
 			super.createControl(parent);
 
 			contentOutlineViewer = getTreeViewer();
+			Action sortAlphabetAction = new Action("Sort", IAction.AS_PUSH_BUTTON) {
+
+				@Override
+				public void run() {
+
+					TreeViewer treeViewer2 = getTreeViewer();
+					Tree tree = treeViewer2.getTree();
+					tree.setRedraw(false);
+					try {
+
+						// getTreeViewer().collapseAll();
+						TreeViewer viewer = contentOutlineViewer;
+						// Sort tree alphabetically
+						if (sort) {
+
+							viewer.setComparator(new ViewerComparator());
+							sort = false;
+						} else {
+							viewer.setComparator(null);
+							sort = true;
+						}
+					} finally {
+						tree.setRedraw(true);
+					}
+				}
+
+			};
+			sortAlphabetAction.setImageDescriptor(Bio7REditorPlugin.getImageDescriptor("icons/alphab_sort_co.png"));
+			Action collapseAllAction = new Action("Collapse", IAction.AS_PUSH_BUTTON) {
+
+				@Override
+				public void run() {
+
+					TreeViewer treeViewer2 = getTreeViewer();
+					Tree tree = treeViewer2.getTree();
+					tree.setRedraw(false);
+					try {
+
+						getTreeViewer().collapseAll();
+						
+					} finally {
+						tree.setRedraw(true);
+					}
+				}
+
+			};
+			collapseAllAction.setImageDescriptor(Bio7REditorPlugin.getImageDescriptor("icons/collapseall.png"));
+			// Add actions to the toolbar
+			IActionBars actionBars = getSite().getActionBars();
+			IToolBarManager toolbarManager = actionBars.getToolBarManager();
+			toolbarManager.add(collapseAllAction);
+			toolbarManager.add(sortAlphabetAction);
 
 			contentOutlineViewer.addSelectionChangedListener(this);
 
