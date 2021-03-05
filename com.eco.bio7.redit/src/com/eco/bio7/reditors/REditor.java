@@ -823,6 +823,7 @@ public class REditor extends TextEditor implements IPropertyChangeListener, Upda
 						/* The default expand level! */
 						contentOutlineViewer.expandToLevel(2);
 						control.setRedraw(true);
+						control.redraw();
 					}
 				}
 			}
@@ -921,6 +922,8 @@ public class REditor extends TextEditor implements IPropertyChangeListener, Upda
 					try {
 
 						getTreeViewer().collapseAll();
+						/* The default expand level! */
+						contentOutlineViewer.expandToLevel(2);
 						
 					} finally {
 						tree.setRedraw(true);

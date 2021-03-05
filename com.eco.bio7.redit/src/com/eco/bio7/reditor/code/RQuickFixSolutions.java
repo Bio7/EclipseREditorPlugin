@@ -146,116 +146,8 @@ public class RQuickFixSolutions {
 				break;
 			case "Warn16":
 
-				RRefPhaseListen ref = new Parse(editor).parseFromOffset(offset);
-				StringBuffer buffScopedFunctions = ref.getBuffScopeFunctions();
-				String[] splitBuffScopedFun = buffScopedFunctions.toString().split(",");
+				prop = calculateLevensteinSuggestions(offset, endChar, tokenText);
 
-				List<Pair<String, Double>> words = new ArrayList<Pair<String, Double>>();
-				List<Pair<String, Double>> proposals = new ArrayList<Pair<String, Double>>();
-
-				/*
-				 * First we add the proposals function from already loaded packages and the sort
-				 * them!
-				 */
-				String[] statistics = CalculateRProposals.getStatistics();
-				for (int i = 0; i < statistics.length; i++) {
-					/* Calculate the LevenShtein distance! */
-					double dist = Levenshtein.getLevenshteinDistance(tokenText, statistics[i]);
-					/* Calculate as percent! */
-					double max = Math.max(tokenText.length(), statistics[i].length());
-					double perct = round(1.0 - (dist / max), 2);
-					/* Add to a Pair to sort the distances! */
-					proposals.add(new Pair<String, Double>(statistics[i], perct));
-				}
-				/* Sort the Levenshtein distances in descending order! */
-				sort(proposals);
-				/*
-				 * We only add 10 sorted functions from the packages to the final suggestions!
-				 */
-				for (int i = 0; i < 10; i++) {
-					words.add(proposals.get(i));
-				}
-				/* Now we add the local defined functions and sort them! */
-				for (int i = 0; i < splitBuffScopedFun.length; i++) {
-					/* Calculate the LevenShtein distance! */
-					double dist = Levenshtein.getLevenshteinDistance(tokenText, splitBuffScopedFun[i]);
-					/* Calculate as percent! */
-					double max = Math.max(tokenText.length(), splitBuffScopedFun[i].length());
-					double perct = round(1.0 - (dist / max), 2);
-					/* Add to a Pair to sort the distances! */
-					words.add(new Pair<String, Double>(splitBuffScopedFun[i], perct));
-				}
-
-				/* Sort the Levenshtein distances in descending order! */
-				sort(words);
-
-				/*
-				 * Here we search for functions in all packages. If found returns the package
-				 * name!
-				 */
-				String[] packagesFound = searchForPackageFunction(tokenText);
-				if (packagesFound != null) {
-					ArrayList<String> resultedPackages = new ArrayList<String>();
-					for (int i = 0; i < packagesFound.length; i++) {
-						if (editor.getParser().getCurrentPackageImports().containsKey(packagesFound[i]) == false) {
-							resultedPackages.add(packagesFound[i]);
-						}
-					}
-					String[] tempArray = new String[resultedPackages.size()];
-					packagesFound = resultedPackages.toArray(tempArray);
-
-					prop = new ICompletionProposal[words.size() + packagesFound.length];
-					for (int i = 0; i < packagesFound.length; i++) {
-
-						prop[i] = new RQuickFixCompletionProposal("Import package: " + packagesFound[i], null, 0, 0, "library(" + packagesFound[i] + ")\n", 0, "Reload_Package_Completion", editor);
-
-					}
-					for (int i = 0; i < words.size(); i++) {
-						if (words.get(i) != null) {
-							Pair<String, Double> sugOrdered = words.get(i);
-
-							prop[i + packagesFound.length] = new RQuickFixCompletionProposal("Functions available:" + " '" + sugOrdered.getKey() + "' Similarity:" + " " + sugOrdered.getValue(), null,
-									offset, endChar, sugOrdered.getKey(), endChar - offset, null, null);
-						} else {
-							prop[i + packagesFound.length] = new RQuickFixCompletionProposal("Functions available: NA", null, offset, endChar, "NA", 2, null, null);
-						}
-					}
-				} else {
-					/* No packages found we return the default! */
-					prop = new ICompletionProposal[words.size()];
-					for (int i = 0; i < words.size(); i++) {
-						if (words.get(i) != null) {
-							Pair<String, Double> sugOrdered = words.get(i);
-
-							prop[i] = new RQuickFixCompletionProposal("Functions available:" + " '" + sugOrdered.getKey() + "' Similarity:" + " " + sugOrdered.getValue(), null, offset, endChar,
-									sugOrdered.getKey(), endChar - offset, null, null);
-						} else {
-							prop[i] = new RQuickFixCompletionProposal("Functions available: NA", null, offset, endChar, "NA", 2, null, null);
-						}
-					}
-
-				}
-
-				/* First proposal to create a function! */
-				// prop[0] = new RQuickFixCompletionProposal("Create function","Create a new
-				// function", offset, endChar, System.lineSeparator() + tokenText +
-				// "<-function(){}" + System.lineSeparator(), 0);
-				/*
-				 * The following proposals all sorted functions from Levenshstein distances!
-				 */
-
-				/*
-				 * for (int i = 0; i < words.size(); i++) { if (words.get(i) != null) {
-				 * Pair<String, Double> sugOrdered = words.get(i);
-				 * 
-				 * prop[i + packagesFound.length] = new
-				 * RQuickFixCompletionProposal("Functions available:" + " '" +
-				 * sugOrdered.getKey() + "' Similarity:" + " " + sugOrdered.getValue(), null,
-				 * offset, endChar, sugOrdered.getKey(), endChar - offset,null); } else { prop[i
-				 * + packagesFound.length] = new
-				 * RQuickFixCompletionProposal("Functions available: NA", null, offset, endChar,
-				 * "NA", 2,null); } }
-				 */
 				break;
 
 			case "Warn17":
@@ -275,13 +167,6 @@ public class RQuickFixSolutions {
 								offset, endChar, replacement, endChar - offset, null, null) };
 				break;
 
-			case "Warn19":
-				prop = new ICompletionProposal[] {
-
-						new RQuickFixCompletionProposal("Click here to install missing R package", "Package can't be found in the\ndefault R package locations.", offset, endChar, tokenText,
-								endChar - offset, "Install_Missing_Packages", editor) };
-
-				break;
 			case "Warn20":
 				prop = new ICompletionProposal[] {
 
@@ -310,12 +195,134 @@ public class RQuickFixSolutions {
 								endChar - offset, null,null) };
 
 				break;
+				
+			case "Warn23":
+				prop = new ICompletionProposal[] {
+
+						new RQuickFixCompletionProposal("Click here to install missing R package", "Package can't be found in the\ndefault R package locations.", offset, endChar, tokenText,
+								endChar - offset, "Install_Missing_Packages", editor) };
+
+				break;
 
 			default:
 				break;
 			}
 
 		}
+		return prop;
+	}
+
+	private ICompletionProposal[] calculateLevensteinSuggestions(int offset, int endChar, String tokenText) {
+		ICompletionProposal[] prop;
+		RRefPhaseListen ref = new Parse(editor).parseFromOffset(offset);
+		StringBuffer buffScopedFunctions = ref.getBuffScopeFunctions();
+		String[] splitBuffScopedFun = buffScopedFunctions.toString().split(",");
+
+		List<Pair<String, Double>> words = new ArrayList<Pair<String, Double>>();
+		List<Pair<String, Double>> proposals = new ArrayList<Pair<String, Double>>();
+
+		/*
+		 * First we add the proposals function from already loaded packages and the sort
+		 * them!
+		 */
+		String[] statistics = CalculateRProposals.getStatistics();
+		for (int i = 0; i < statistics.length; i++) {
+			/* Calculate the LevenShtein distance! */
+			double dist = Levenshtein.getLevenshteinDistance(tokenText, statistics[i]);
+			/* Calculate as percent! */
+			double max = Math.max(tokenText.length(), statistics[i].length());
+			double perct = round(1.0 - (dist / max), 2);
+			/* Add to a Pair to sort the distances! */
+			proposals.add(new Pair<String, Double>(statistics[i], perct));
+		}
+		/* Sort the Levenshtein distances in descending order! */
+		sort(proposals);
+		/*
+		 * We only add 10 sorted functions from the packages to the final suggestions!
+		 */
+		for (int i = 0; i < 10; i++) {
+			words.add(proposals.get(i));
+		}
+		/* Now we add the local defined functions and sort them! */
+		for (int i = 0; i < splitBuffScopedFun.length; i++) {
+			/* Calculate the LevenShtein distance! */
+			double dist = Levenshtein.getLevenshteinDistance(tokenText, splitBuffScopedFun[i]);
+			/* Calculate as percent! */
+			double max = Math.max(tokenText.length(), splitBuffScopedFun[i].length());
+			double perct = round(1.0 - (dist / max), 2);
+			/* Add to a Pair to sort the distances! */
+			words.add(new Pair<String, Double>(splitBuffScopedFun[i], perct));
+		}
+
+		/* Sort the Levenshtein distances in descending order! */
+		sort(words);
+
+		/*
+		 * Here we search for functions in all packages. If found returns the package
+		 * name!
+		 */
+		String[] packagesFound = searchForPackageFunction(tokenText);
+		if (packagesFound != null) {
+			ArrayList<String> resultedPackages = new ArrayList<String>();
+			for (int i = 0; i < packagesFound.length; i++) {
+				if (editor.getParser().getCurrentPackageImports().containsKey(packagesFound[i]) == false) {
+					resultedPackages.add(packagesFound[i]);
+				}
+			}
+			String[] tempArray = new String[resultedPackages.size()];
+			packagesFound = resultedPackages.toArray(tempArray);
+
+			prop = new ICompletionProposal[words.size() + packagesFound.length];
+			for (int i = 0; i < packagesFound.length; i++) {
+
+				prop[i] = new RQuickFixCompletionProposal("Import package: " + packagesFound[i], null, 0, 0, "library(" + packagesFound[i] + ")\n", 0, "Reload_Package_Completion", editor);
+
+			}
+			for (int i = 0; i < words.size(); i++) {
+				if (words.get(i) != null) {
+					Pair<String, Double> sugOrdered = words.get(i);
+
+					prop[i + packagesFound.length] = new RQuickFixCompletionProposal("Functions available:" + " '" + sugOrdered.getKey() + "' Similarity:" + " " + sugOrdered.getValue(), null,
+							offset, endChar, sugOrdered.getKey(), endChar - offset, null, null);
+				} else {
+					prop[i + packagesFound.length] = new RQuickFixCompletionProposal("Functions available: NA", null, offset, endChar, "NA", 2, null, null);
+				}
+			}
+		} else {
+			/* No packages found we return the default! */
+			prop = new ICompletionProposal[words.size()];
+			for (int i = 0; i < words.size(); i++) {
+				if (words.get(i) != null) {
+					Pair<String, Double> sugOrdered = words.get(i);
+
+					prop[i] = new RQuickFixCompletionProposal("Functions available:" + " '" + sugOrdered.getKey() + "' Similarity:" + " " + sugOrdered.getValue(), null, offset, endChar,
+							sugOrdered.getKey(), endChar - offset, null, null);
+				} else {
+					prop[i] = new RQuickFixCompletionProposal("Functions available: NA", null, offset, endChar, "NA", 2, null, null);
+				}
+			}
+
+		}
+		/* First proposal to create a function! */
+		// prop[0] = new RQuickFixCompletionProposal("Create function","Create a new
+		// function", offset, endChar, System.lineSeparator() + tokenText +
+		// "<-function(){}" + System.lineSeparator(), 0);
+		/*
+		 * The following proposals all sorted functions from Levenshstein distances!
+		 */
+
+		/*
+		 * for (int i = 0; i < words.size(); i++) { if (words.get(i) != null) {
+		 * Pair<String, Double> sugOrdered = words.get(i);
+		 * 
+		 * prop[i + packagesFound.length] = new
+		 * RQuickFixCompletionProposal("Functions available:" + " '" +
+		 * sugOrdered.getKey() + "' Similarity:" + " " + sugOrdered.getValue(), null,
+		 * offset, endChar, sugOrdered.getKey(), endChar - offset,null); } else { prop[i
+		 * + packagesFound.length] = new
+		 * RQuickFixCompletionProposal("Functions available: NA", null, offset, endChar,
+		 * "NA", 2,null); } }
+		 */
 		return prop;
 	}
 
