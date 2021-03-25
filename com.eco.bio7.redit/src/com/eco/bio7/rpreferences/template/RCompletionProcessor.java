@@ -17,6 +17,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessorExtension;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 import org.eclipse.jface.text.templates.TemplateContext;
@@ -37,10 +38,11 @@ import com.eco.bio7.reditor.antlr.ref.RRefPhaseListen;
 import com.eco.bio7.reditors.REditor;
 import com.eco.bio7.reditors.TemplateEditorUI;
 import com.eco.bio7.util.Util;
+
 /**
  * A completion processor for R templates.
  */
-public class RCompletionProcessor extends TemplateCompletionProcessor {
+public class RCompletionProcessor extends TemplateCompletionProcessor implements IContentAssistProcessorExtension {
 
 	private static final Comparator fgProposalComparator = new ProposalComparator();
 
@@ -57,7 +59,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	// private Image imageArgs =
 	// Bio7REditorPlugin.getImageDescriptor("/icons/template_obj.png").createImage();
 	private Image imageVariablesWorkspace = Bio7REditorPlugin.getImageDescriptor("/icons/types.png").createImage();
-	private Image imageVariablesEditor = Bio7REditorPlugin.getImageDescriptor("/icons/field_public_obj.png").createImage();
+	private Image imageVariablesEditor = Bio7REditorPlugin.getImageDescriptor("/icons/field_public_obj.png")
+			.createImage();
 	private Image imageFunctionsEditor = Bio7REditorPlugin.getImageDescriptor("/icons/methpub_obj.png").createImage();
 	private Image s4Image = Bio7REditorPlugin.getImageDescriptor("/icons/s4.png").createImage();
 	private Image s3Image = Bio7REditorPlugin.getImageDescriptor("/icons/s3.png").createImage();
@@ -150,17 +153,15 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	 * Cut out angular brackets for relevance sorting, since the template name does
 	 * not contain the brackets.
 	 * 
-	 * @param template
-	 *            the template
-	 * @param prefix
-	 *            the prefix
+	 * @param template the template
+	 * @param prefix   the prefix
 	 * @return the relevance of the <code>template</code> for the given
 	 *         <code>prefix</code>
 	 */
 	protected int getRelevance(Template template, String prefix) {
 
-		if (template.getName().startsWith(prefix)||template.getName().toLowerCase().startsWith(prefix))
-		//if (template.getName().toLowerCase().startsWith(prefix))
+		if (template.getName().startsWith(prefix) || template.getName().toLowerCase().startsWith(prefix))
+			// if (template.getName().toLowerCase().startsWith(prefix))
 			return 90;
 		return 0;
 	}
@@ -169,6 +170,37 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 		public int compare(Object o1, Object o2) {
 			return ((TemplateProposal) o2).getRelevance() - ((TemplateProposal) o1).getRelevance();
 		}
+	}
+
+	public boolean isCompletionProposalAutoActivation(char c, ITextViewer viewer, int offset) {
+		if (store.getBoolean("TYPED_CODE_COMPLETION")) {
+			/*
+			 * Check that we don't trigger the action with special characters, e.g., with a
+			 * ',' in a function call!
+			 */
+			if (!Character.isJavaIdentifierPart(c) && (c == '.') == false && (c == '@') == false
+					&& (c == ':') == false) {
+				return false;
+			}
+			/*
+			 * Prefix here is one character less than in the computeCompletionProposals
+			 * calculation! Maybe triggered before the character is set?
+			 */
+			String prefix = extractPrefix(viewer, offset);
+
+			int activateKeyNrTyped = store.getInt("ACTIVATION_AMOUNT_CHAR_COMPLETION");
+			if (prefix.length() + 1 == activateKeyNrTyped) {
+				return true;
+			}
+
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isContextInformationAutoActivation(char c, ITextViewer viewer, int offset) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -185,7 +217,6 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 		 * the method!
 		 */
 		String prefix = extractPrefix(viewer, offset);
-
 		int leng = prefix.length();
 		Region region = null;
 		/*
@@ -236,9 +267,9 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 		 * null to avoid the opening of the template dialog!
 		 */
 
-		int activateKeyNrTyped = store.getInt("ACTIVATION_AMOUNT_CHAR_COMPLETION");
+		// int activateKeyNrTyped = store.getInt("ACTIVATION_AMOUNT_CHAR_COMPLETION");
 		String charBeforeCursor = "";
-		String charAfter = "";
+		// String charAfter = "";
 		/* Extract the word before the cursor to detect $, @! */
 		if (offset > 0) {
 			try {
@@ -274,11 +305,13 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 			return namesPackageExportActivation(offset, prefix);
 
-		}
-		else if (prefix.contains(":")) {
-			/*If we have only one colon we shorten the prefix to occurrence to get code completion for e.g., 1:length() or similar expressions!*/
-			int index=prefix.indexOf(":");
-			prefix=prefix.substring(index+1, prefix.length());
+		} else if (prefix.contains(":")) {
+			/*
+			 * If we have only one colon we shorten the prefix to occurrence to get code
+			 * completion for e.g., 1:length() or similar expressions!
+			 */
+			int index = prefix.indexOf(":");
+			prefix = prefix.substring(index + 1, prefix.length());
 
 		}
 		/* Control if we are in a matrix '[]' call! */
@@ -286,17 +319,20 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 			if (leng <= 0) {
 
-				return matrixArgumentProposals(offset, prefix, matDfName, state, bracketCommaCount, false, buffScopedVars, buffScopedFunctions);
+				return matrixArgumentProposals(offset, prefix, matDfName, state, bracketCommaCount, false,
+						buffScopedVars, buffScopedFunctions);
 
-			} else if (leng > 0) {
+			}
+			 else if (leng > 0) {
 
-				/* After which amount of chars we open the code completion automatically! */
-				if (leng >= activateKeyNrTyped) {
+			/* After which amount of chars we open the code completion automatically! */
+			// if (leng >= activateKeyNrTyped) {
 
-					region = new Region(offset - prefix.length(), prefix.length());
+			 region = new Region(offset - prefix.length(), prefix.length());
 
-				}
-			} else {
+			 }
+			// }
+			else {
 				return new ICompletionProposal[0];
 			}
 		}
@@ -304,19 +340,23 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 		if (isInMatrixDoubleBracketCall) {
 			if (leng <= 0) {
 
-				return matrixArgumentProposals(offset, prefix, matDfName, state, bracketCommaCount, true, buffScopedVars, buffScopedFunctions);
+				return matrixArgumentProposals(offset, prefix, matDfName, state, bracketCommaCount, true,
+						buffScopedVars, buffScopedFunctions);
 
 				// if call has two arguments, cursor on the left argument!
 
-			} else if (leng > 0) {
+			}
 
-				/* After which amount of chars we open the code completion automatically! */
-				if (leng >= activateKeyNrTyped) {
+			 else if (leng > 0) {
 
-					region = new Region(offset - prefix.length(), prefix.length());
+			/* After which amount of chars we open the code completion automatically! */
+			// if (leng >= activateKeyNrTyped) {
 
-				}
-			} else {
+			 region = new Region(offset - prefix.length(), prefix.length());
+
+			 }
+			// }
+			else {
 				return new ICompletionProposal[0];
 			}
 
@@ -331,8 +371,10 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 				if (proposalNameFound != null) {
 					/* We want to open and filter data(), library() and require()! */
-					if (proposalNameFound.equals("data") || proposalNameFound.equals("library") || proposalNameFound.equals("require")) {
-						propo = libraryDataProposals(viewer, offset, prefix, proposalNameFound, buffScopedVars, buffScopedFunctions);
+					if (proposalNameFound.equals("data") || proposalNameFound.equals("library")
+							|| proposalNameFound.equals("require")) {
+						propo = libraryDataProposals(viewer, offset, prefix, proposalNameFound, buffScopedVars,
+								buffScopedFunctions);
 						return propo;
 					}
 
@@ -340,12 +382,14 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 					 * If we have have default packages methods. We check in the method for special
 					 * functions (library, etc.)!
 					 */
-					propo = packageFunctionArgumentProposals(viewer, offset, leng, proposalNameFound, buffScopedVars, buffScopedFunctions);
+					propo = packageFunctionArgumentProposals(viewer, offset, leng, proposalNameFound, buffScopedVars,
+							buffScopedFunctions);
 				} else {
 					/*
 					 * If we have call proposals from scope defined variables and functions!
 					 */
-					propo = editorFunctionArgumentProposals(viewer, offset, leng, ref, resultMethodCallVars, buffScopedVars, buffScopedFunctions);
+					propo = editorFunctionArgumentProposals(viewer, offset, leng, ref, resultMethodCallVars,
+							buffScopedVars, buffScopedFunctions);
 
 				}
 				return propo;
@@ -356,30 +400,36 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 			else if (leng > 0) {
 				if (proposalNameFound != null) {
 
-					if (proposalNameFound.equals("data") || proposalNameFound.equals("library") || proposalNameFound.equals("require")) {
-						propo = libraryDataProposals(viewer, offset, prefix, proposalNameFound, buffScopedVars, buffScopedFunctions);
+					if (proposalNameFound.equals("data") || proposalNameFound.equals("library")
+							|| proposalNameFound.equals("require")) {
+						propo = libraryDataProposals(viewer, offset, prefix, proposalNameFound, buffScopedVars,
+								buffScopedFunctions);
 						return propo;
 					}
 				}
 				/* After which amount of chars we open the code completion automatically! */
-				if (leng >= activateKeyNrTyped) {
+				// if (leng >= activateKeyNrTyped) {
 
-					region = new Region(offset - prefix.length(), prefix.length());
+				// region = new Region(offset - prefix.length(), prefix.length());
 
-				}
-			} else {
-				return new ICompletionProposal[0];
+				// }
 			}
+			/*
+			 * 
+			 * else { return new ICompletionProposal[0]; }
+			 */
 		}
 
-		else {
-			if (leng >= activateKeyNrTyped) {
-				region = new Region(offset - prefix.length(), prefix.length());
-			} else {
-				return new ICompletionProposal[0];
-			}
+		/*
+		 * else { if (leng >= activateKeyNrTyped) { region = new Region(offset -
+		 * prefix.length(), prefix.length()); } else { return new
+		 * ICompletionProposal[0]; }
+		 * 
+		 * }
+		 */
 
-		}
+		region = new Region(offset - prefix.length(), prefix.length());
+
 		TemplateContext context = createContext(viewer, region);
 		if (context == null)
 			return new ICompletionProposal[0];
@@ -408,7 +458,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 		Template[] tempLocalWorkspaceVars = new Template[varsWorkspace.length];
 		for (int i = 0; i < varsWorkspace.length; i++) {
-			tempLocalWorkspaceVars[i] = new Template(varsWorkspace[i], varsWorkspaceClass[i], context.getContextType().getId(), varsWorkspace[i], true);
+			tempLocalWorkspaceVars[i] = new Template(varsWorkspace[i], varsWorkspaceClass[i],
+					context.getContextType().getId(), varsWorkspace[i], true);
 
 			Template template = tempLocalWorkspaceVars[i];
 			try {
@@ -428,7 +479,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 			Template[] tempLocalVars = new Template[splitVars.length];
 
 			for (int i = 0; i < tempLocalVars.length; i++) {
-				tempLocalVars[i] = new Template(splitVars[i], "editor variable", context.getContextType().getId(), splitVars[i], true);
+				tempLocalVars[i] = new Template(splitVars[i], "editor variable", context.getContextType().getId(),
+						splitVars[i], true);
 
 				Template template = tempLocalVars[i];
 				try {
@@ -447,7 +499,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 			Template[] tempLocalFunctions = new Template[splitBuffScopedFun.length];
 
 			for (int i = 0; i < tempLocalFunctions.length; i++) {
-				tempLocalFunctions[i] = new Template(splitBuffScopedFun[i], "editor function", context.getContextType().getId(), splitBuffScopedFun[i] + "(${cursor})", true);
+				tempLocalFunctions[i] = new Template(splitBuffScopedFun[i], "editor function",
+						context.getContextType().getId(), splitBuffScopedFun[i] + "(${cursor})", true);
 
 				Template template = tempLocalFunctions[i];
 				try {
@@ -468,9 +521,11 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 		for (int i = 0; i < temp.length; i++) {
 			if (writeAllTemplateArguments) {
-				temp[i] = new Template(statistics[i], statisticsContext[i], context.getContextType().getId(), statisticsSet[i], true);
+				temp[i] = new Template(statistics[i], statisticsContext[i], context.getContextType().getId(),
+						statisticsSet[i], true);
 			} else {
-				temp[i] = new Template(statistics[i], statisticsContext[i], context.getContextType().getId(), statistics[i] + "(${cursor})", true);
+				temp[i] = new Template(statistics[i], statisticsContext[i], context.getContextType().getId(),
+						statistics[i] + "(${cursor})", true);
 			}
 			Template template = temp[i];
 			try {
@@ -513,13 +568,15 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 						// ArrayList<CompletionProposal> list = new ArrayList<CompletionProposal>();
 						try {
 							varsWorkspace = (String[]) c.eval("try(ls(),silent=TRUE)").asStrings();
-							varsWorkspaceClass = (String[]) c.eval("try(as.character(lapply(mget(ls()),class)))").asStrings();
+							varsWorkspaceClass = (String[]) c.eval("try(as.character(lapply(mget(ls()),class)))")
+									.asStrings();
 
 							if (isInPipedFunction) {
 
 								REXP rexp = null;
 								/* We accept dataframes! */
-								rexp = c.eval("try(if (is.data.frame(" + pipedDataName + ")){colnames(" + pipedDataName + ")} ,silent=TRUE)");
+								rexp = c.eval("try(if (is.data.frame(" + pipedDataName + ")){colnames(" + pipedDataName
+										+ ")} ,silent=TRUE)");
 
 								if (rexp.isNull() == false) {
 
@@ -585,7 +642,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 						ArrayList<CompletionProposal> list = new ArrayList<CompletionProposal>();
 						String res = prefix.substring(0, prefix.lastIndexOf("::"));
 						try {
-							String[] result = (String[]) c.eval("try(grep(\"^[a-zA-Z]\",sort(getNamespaceExports(\"" + res + "\")),all,value=TRUE),silent=TRUE)").asStrings();
+							String[] result = (String[]) c.eval("try(grep(\"^[a-zA-Z]\",sort(getNamespaceExports(\""
+									+ res + "\")),all,value=TRUE),silent=TRUE)").asStrings();
 							if (result != null && result.length > 0) {
 								if (result[0].startsWith("Error") == false) {
 
@@ -593,9 +651,12 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 									for (int j = 0; j < result.length; j++) {
 
-										if (result[j].length() >= length && result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
+										if (result[j].length() >= length
+												&& result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
 
-											list.add(new CompletionProposal(result[j], offSet - length, length, result[j].length(), imageFunctionsEditor, result[j], null, result[j]));
+											list.add(new CompletionProposal(result[j], offSet - length, length,
+													result[j].length(), imageFunctionsEditor, result[j], null,
+													result[j]));
 										}
 
 									}
@@ -643,16 +704,20 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 					if (c != null) {
 						String res = prefix.substring(0, prefix.lastIndexOf(":::"));
 						try {
-							String[] result = (String[]) c.eval("try(grep(\"^[a-zA-Z]\",ls(getNamespace(\"" + res + "\"), all.names=TRUE),value=TRUE),silent=TRUE)").asStrings();
+							String[] result = (String[]) c.eval("try(grep(\"^[a-zA-Z]\",ls(getNamespace(\"" + res
+									+ "\"), all.names=TRUE),value=TRUE),silent=TRUE)").asStrings();
 							if (result != null && result.length > 0) {
 								if (result[0].startsWith("Error") == false) {
 
 									propo = new CompletionProposal[result.length];
 									for (int j = 0; j < result.length; j++) {
 
-										if (result[j].length() >= length && result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
+										if (result[j].length() >= length
+												&& result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
 
-											list.add(new CompletionProposal(result[j], offSet - length, length, result[j].length(), imageFunctionsEditor, result[j], null, result[j]));
+											list.add(new CompletionProposal(result[j], offSet - length, length,
+													result[j].length(), imageFunctionsEditor, result[j], null,
+													result[j]));
 										}
 
 									}
@@ -707,15 +772,19 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 									propo = new CompletionProposal[result.length];
 									for (int j = 0; j < result.length; j++) {
 
-										if (result[j].length() >= length && result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
-                                            
-											String resultStr = (String) c.eval("try(capture.output(str(" + res + "@" + result[j] + ")),silent=TRUE)").asString();
+										if (result[j].length() >= length
+												&& result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
+
+											String resultStr = (String) c.eval("try(capture.output(str(" + res + "@"
+													+ result[j] + ")),silent=TRUE)").asString();
 											if (resultStr != null) {
 
-												list.add(new CompletionProposal(result[j], offSet - length, length, result[j].length(), s4Image, result[j], null, resultStr));
+												list.add(new CompletionProposal(result[j], offSet - length, length,
+														result[j].length(), s4Image, result[j], null, resultStr));
 											} else {
 
-												list.add(new CompletionProposal(result[j], offSet - length, length, result[j].length(), s4Image, result[j], null, result[j]));
+												list.add(new CompletionProposal(result[j], offSet - length, length,
+														result[j].length(), s4Image, result[j], null, result[j]));
 											}
 
 										}
@@ -773,13 +842,17 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 									for (int j = 0; j < result.length; j++) {
 
-										if (result[j].length() >= length && result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
+										if (result[j].length() >= length
+												&& result[j].substring(0, length).equalsIgnoreCase(afterLastIndex)) {
 
-											String resultStr = (String) c.eval("try(capture.output(str(" + res + "$" + result[j] + ")),silent=TRUE)").asString();
+											String resultStr = (String) c.eval("try(capture.output(str(" + res + "$"
+													+ result[j] + ")),silent=TRUE)").asString();
 											if (resultStr != null) {
-												list.add(new CompletionProposal(result[j], offSet - length, length, result[j].length(), s3Image, result[j], null, resultStr));
+												list.add(new CompletionProposal(result[j], offSet - length, length,
+														result[j].length(), s3Image, result[j], null, resultStr));
 											} else {
-												list.add(new CompletionProposal(result[j], offSet - length, length, result[j].length(), s3Image, result[j], null, result[j]));
+												list.add(new CompletionProposal(result[j], offSet - length, length,
+														result[j].length(), s3Image, result[j], null, result[j]));
 											}
 
 										}
@@ -816,7 +889,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	 * Here we calculate the proposals for library(), require() and data() when
 	 * invoked inside a function call!
 	 */
-	private CompletionProposal[] libraryDataProposals(ITextViewer viewer, int offset, String prefix, String funcNameFromProposals, StringBuffer resultBuffScopeVars, StringBuffer buffScopedFunctions) {
+	private CompletionProposal[] libraryDataProposals(ITextViewer viewer, int offset, String prefix,
+			String funcNameFromProposals, StringBuffer resultBuffScopeVars, StringBuffer buffScopedFunctions) {
 
 		if (funcNameFromProposals != null) {
 
@@ -858,9 +932,11 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 										 * available templates!
 										 */
 
-										if (dirPackageFiles[i].length() >= length && dirPackageFiles[i].substring(0, length).equalsIgnoreCase(prefix)) {
+										if (dirPackageFiles[i].length() >= length
+												&& dirPackageFiles[i].substring(0, length).equalsIgnoreCase(prefix)) {
 
-											list.add(new CompletionProposal(dirPackageFiles[i], offset - length, length, dirPackageFiles[i].length(), libImage, dirPackageFiles[i], null,
+											list.add(new CompletionProposal(dirPackageFiles[i], offset - length, length,
+													dirPackageFiles[i].length(), libImage, dirPackageFiles[i], null,
 													packageTitle[i]));
 										}
 									}
@@ -921,10 +997,12 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 										 * available templates!
 										 */
 
-										if (item[i].length() >= length && item[i].substring(0, length).equalsIgnoreCase(prefix)) {
+										if (item[i].length() >= length
+												&& item[i].substring(0, length).equalsIgnoreCase(prefix)) {
 
-											list.add(
-													new CompletionProposal(item[i], offset - length, length, item[i].length(), dataImage, item[i] + " (package: " + packages[i] + ")", null, title[i]));
+											list.add(new CompletionProposal(item[i], offset - length, length,
+													item[i].length(), dataImage,
+													item[i] + " (package: " + packages[i] + ")", null, title[i]));
 										}
 									}
 
@@ -950,7 +1028,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 		return propo;
 	}
 
-	private ICompletionProposal[] matrixArgumentProposals(int offset, String prefix, String matDfName, int state, int bracketCommaCount, boolean doubleMatrixCall, StringBuffer resultBuffScopeVars,
+	private ICompletionProposal[] matrixArgumentProposals(int offset, String prefix, String matDfName, int state,
+			int bracketCommaCount, boolean doubleMatrixCall, StringBuffer resultBuffScopeVars,
 			StringBuffer buffScopedFunctions) {
 		int length = prefix.length();
 		/* The current workspace variables! */
@@ -973,8 +1052,10 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 									REXP rexp = null;
 									/* Here we leave out matrices and arrays (matrices are arrays)! */
 									try {
-										rexp = con.eval("try(if (is.data.frame(" + matDfName + ")){colnames(" + matDfName + ")} else if (is.list(" + matDfName + ")) {names(" + matDfName
-												+ ")} else if (is.vector(" + matDfName + ")) {names(" + matDfName + ")} ,silent=TRUE)");
+										rexp = con.eval("try(if (is.data.frame(" + matDfName + ")){colnames("
+												+ matDfName + ")} else if (is.list(" + matDfName + ")) {names("
+												+ matDfName + ")} else if (is.vector(" + matDfName + ")) {names("
+												+ matDfName + ")} ,silent=TRUE)");
 									} catch (RserveException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -1000,8 +1081,10 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 								try {
 									REXP rexp = null;
 									try {
-										rexp = con.eval("try(if (is.data.frame(" + matDfName + ")||is.matrix(" + matDfName + ")){colnames(" + matDfName + ")} else if(is.array(" + matDfName
-												+ ")){rownames(" + matDfName + ")} else{names(" + matDfName + ")} ,silent=TRUE)");
+										rexp = con.eval("try(if (is.data.frame(" + matDfName + ")||is.matrix("
+												+ matDfName + ")){colnames(" + matDfName + ")} else if(is.array("
+												+ matDfName + ")){rownames(" + matDfName + ")} else{names(" + matDfName
+												+ ")} ,silent=TRUE)");
 									} catch (RserveException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -1063,7 +1146,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 									REXP rexp = null;
 									try {
 
-										rexp = con.eval("try(dimnames(" + matDfName + ")[[" + (state + 1) + "]],silent=TRUE)");
+										rexp = con.eval(
+												"try(dimnames(" + matDfName + ")[[" + (state + 1) + "]],silent=TRUE)");
 									} catch (RserveException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -1101,10 +1185,18 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 								}
 
 								int len1 = item.length;// The extracted arguments length
-								int len2 = item.length + varsWorkspace.length;// Extracted arguments + the workspace variables length
-								int len3 = item.length + varsWorkspace.length + scopedFunctions.length;// Extracted arguments + the workspace variables + the editor defined functions
+								int len2 = item.length + varsWorkspace.length;// Extracted arguments + the workspace
+																				// variables length
+								int len3 = item.length + varsWorkspace.length + scopedFunctions.length;// Extracted
+																										// arguments +
+																										// the workspace
+																										// variables +
+																										// the editor
+																										// defined
+																										// functions
 																										// length
-								int allProposals = len3 + scopedVars.length;// Extracted arguments + the workspace variables + the editor defined functions
+								int allProposals = len3 + scopedVars.length;// Extracted arguments + the workspace
+																			// variables + the editor defined functions
 																			// length + the editor defined variables
 
 								propo = new CompletionProposal[allProposals];
@@ -1118,29 +1210,37 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 								 */
 
 								/* Get the object information as context info! */
-								//String resultStr = new RStrObjectInformation().getRStrObjectInfo(matDfName, con);
+								// String resultStr = new RStrObjectInformation().getRStrObjectInfo(matDfName,
+								// con);
 
 								for (int j = 0; j < allProposals; j++) {
 									if (j < item.length) {
 
 										if (matDfName != null) {
 											// The extracted arguments
-											propo[j] = new CompletionProposal("\"" + item[j] + "\"", offset, 0, item[j].length() + 2, arrayImage, item[j], null, matDfName);
+											propo[j] = new CompletionProposal("\"" + item[j] + "\"", offset, 0,
+													item[j].length() + 2, arrayImage, item[j], null, matDfName);
 										} else {
-											propo[j] = new CompletionProposal("\"" + item[j] + "\"", offset, 0, item[j].length() + 2, arrayImage, null, null, null);
+											propo[j] = new CompletionProposal("\"" + item[j] + "\"", offset, 0,
+													item[j].length() + 2, arrayImage, null, null, null);
 										}
 
 									} else if (j < len2) {
 										// The workspace variables
-										propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0, varsWorkspace[j - len1].length(), imageVariablesWorkspace,
-												varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null, varsWorkspace[j - len1]);
+										propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0,
+												varsWorkspace[j - len1].length(), imageVariablesWorkspace,
+												varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null,
+												varsWorkspace[j - len1]);
 									} else if (j < len3) {
 										// The defined editor functions
-										propo[j] = new CompletionProposal(scopedFunctions[j - len2], offset, 0, scopedFunctions[j - len2].length(), imageFunctionsEditor, scopedFunctions[j - len2],
-												null, null);
+										propo[j] = new CompletionProposal(scopedFunctions[j - len2], offset, 0,
+												scopedFunctions[j - len2].length(), imageFunctionsEditor,
+												scopedFunctions[j - len2], null, null);
 									} else {
 										// The defined editor variables
-										propo[j] = new CompletionProposal(scopedVars[j - len3], offset, 0, scopedVars[j - len3].length(), imageVariablesEditor, scopedVars[j - len3], null, null);
+										propo[j] = new CompletionProposal(scopedVars[j - len3], offset, 0,
+												scopedVars[j - len3].length(), imageVariablesEditor,
+												scopedVars[j - len3], null, null);
 
 									}
 								}
@@ -1169,7 +1269,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	 * Method to open argument suggestions, vars and functions from self defined
 	 * functions!
 	 */
-	private CompletionProposal[] editorFunctionArgumentProposals(ITextViewer viewer, int offset, int leng, RRefPhaseListen ref, StringBuffer resultmethodCallVars, StringBuffer resultBuffScopeVars,
+	private CompletionProposal[] editorFunctionArgumentProposals(ITextViewer viewer, int offset, int leng,
+			RRefPhaseListen ref, StringBuffer resultmethodCallVars, StringBuffer resultBuffScopeVars,
 			StringBuffer buffScopedFunctions) {
 
 		if (resultmethodCallVars != null && resultmethodCallVars.length() > 0) {
@@ -1196,10 +1297,17 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 			String[] resultMethodCallVars = resultmethodCallVars.toString().split(",");
 
 			int len1 = resultMethodCallVars.length;// The extracted arguments length
-			int len2 = resultMethodCallVars.length + varsWorkspace.length;// Extracted arguments + the workspace variables length
-			int len3 = resultMethodCallVars.length + varsWorkspace.length + scopedFunctions.length;// Extracted arguments + the workspace variables + the editor defined functions
+			int len2 = resultMethodCallVars.length + varsWorkspace.length;// Extracted arguments + the workspace
+																			// variables length
+			int len3 = resultMethodCallVars.length + varsWorkspace.length + scopedFunctions.length;// Extracted
+																									// arguments + the
+																									// workspace
+																									// variables + the
+																									// editor defined
+																									// functions
 																									// length
-			int allProposals = len3 + scopedVars.length;// Extracted arguments + the workspace variables + the editor defined functions
+			int allProposals = len3 + scopedVars.length;// Extracted arguments + the workspace variables + the editor
+														// defined functions
 														// length + the editor defined variables
 
 			propo = new CompletionProposal[allProposals];
@@ -1207,18 +1315,24 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 			for (int j = 0; j < allProposals; j++) {
 				if (j < resultMethodCallVars.length) {
 					// The extracted arguments
-					propo[j] = new CompletionProposal(resultMethodCallVars[j], offset, 0, resultMethodCallVars[j].length(), varImage, resultMethodCallVars[j], null, null);
+					propo[j] = new CompletionProposal(resultMethodCallVars[j], offset, 0,
+							resultMethodCallVars[j].length(), varImage, resultMethodCallVars[j], null, null);
 
 				} else if (j < len2) {
 					// The workspace variables
-					propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0, varsWorkspace[j - len1].length(), imageVariablesWorkspace,
-							varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null, varsWorkspace[j - len1]);
+					propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0,
+							varsWorkspace[j - len1].length(), imageVariablesWorkspace,
+							varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null,
+							varsWorkspace[j - len1]);
 				} else if (j < len3) {
 					// The defined editor functions
-					propo[j] = new CompletionProposal(scopedFunctions[j - len2], offset, 0, scopedFunctions[j - len2].length(), imageFunctionsEditor, scopedFunctions[j - len2]+" - editor function", null, null);
+					propo[j] = new CompletionProposal(scopedFunctions[j - len2], offset, 0,
+							scopedFunctions[j - len2].length(), imageFunctionsEditor,
+							scopedFunctions[j - len2] + " - editor function", null, null);
 				} else {
 					// The defined editor variables
-					propo[j] = new CompletionProposal(scopedVars[j - len3], offset, 0, scopedVars[j - len3].length(), imageVariablesEditor, scopedVars[j - len3]+" - editor variable", null, null);
+					propo[j] = new CompletionProposal(scopedVars[j - len3], offset, 0, scopedVars[j - len3].length(),
+							imageVariablesEditor, scopedVars[j - len3] + " - editor variable", null, null);
 
 				}
 			}
@@ -1228,8 +1342,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	}
 
 	/* The general functions arguments invoked when inside a function! */
-	private CompletionProposal[] packageFunctionArgumentProposals(ITextViewer viewer, int offset, int leng, String funcNameFromProposals, StringBuffer resultBuffScopeVars,
-			StringBuffer buffScopedFunctions) {
+	private CompletionProposal[] packageFunctionArgumentProposals(ITextViewer viewer, int offset, int leng,
+			String funcNameFromProposals, StringBuffer resultBuffScopeVars, StringBuffer buffScopedFunctions) {
 
 		if (funcNameFromProposals != null) {
 
@@ -1268,9 +1382,19 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 						}
 
 						int len1 = proposalMethods.length;// The extracted arguments
-						int len2 = proposalMethods.length + varsWorkspace.length;// Extracted arguments + the workspace variables
-						int len3 = proposalMethods.length + varsWorkspace.length + scopedFunctions.length;// Extracted arguments + the workspace variables + the editor defined functions
-						int allProposals = len3 + scopedVars.length;// Extracted arguments + the workspace variables + the editor defined functions
+						int len2 = proposalMethods.length + varsWorkspace.length;// Extracted arguments + the workspace
+																					// variables
+						int len3 = proposalMethods.length + varsWorkspace.length + scopedFunctions.length;// Extracted
+																											// arguments
+																											// + the
+																											// workspace
+																											// variables
+																											// + the
+																											// editor
+																											// defined
+																											// functions
+						int allProposals = len3 + scopedVars.length;// Extracted arguments + the workspace variables +
+																	// the editor defined functions
 																	// length + the editor defined variables
 
 						propo = new CompletionProposal[allProposals];
@@ -1279,31 +1403,42 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 
 							if (j < proposalMethods.length) {
 								// The extracted arguments
-								propo[j] = new CompletionProposal(proposalMethods[j], offset, 0, proposalMethods[j].length(), varImage, proposalMethods[j], null, statistics[i] + "::::args::::");
+								propo[j] = new CompletionProposal(proposalMethods[j], offset, 0,
+										proposalMethods[j].length(), varImage, proposalMethods[j], null,
+										statistics[i] + "::::args::::");
 								// The workspace variables
 							} else if (j < len2) {
-								/*If we are in a pipe!*/
+								/* If we are in a pipe! */
 								if (pipedDataName != null) {
-									/*Here we get the str object of the dataframe if in a pipe available!*/
+									/* Here we get the str object of the dataframe if in a pipe available! */
 									if (pipedDataName.equals(varsWorkspaceClass[j - len1])) {
-										propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0, varsWorkspace[j - len1].length(), imageVariablesWorkspace,
-												varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1]+" column", null, varsWorkspaceClass[j - len1]);
+										propo[j] = new CompletionProposal(
+												varsWorkspace[j - len1], offset, 0, varsWorkspace[j - len1].length(),
+												imageVariablesWorkspace, varsWorkspace[j - len1] + " - "
+														+ varsWorkspaceClass[j - len1] + " column",
+												null, varsWorkspaceClass[j - len1]);
 									} else {
-										propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0, varsWorkspace[j - len1].length(), imageVariablesWorkspace,
-												varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null, varsWorkspace[j - len1]);
+										propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0,
+												varsWorkspace[j - len1].length(), imageVariablesWorkspace,
+												varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null,
+												varsWorkspace[j - len1]);
 									}
-								}
-								else {
-									propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0, varsWorkspace[j - len1].length(), imageVariablesWorkspace,
-											varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null, varsWorkspace[j - len1]);
+								} else {
+									propo[j] = new CompletionProposal(varsWorkspace[j - len1], offset, 0,
+											varsWorkspace[j - len1].length(), imageVariablesWorkspace,
+											varsWorkspace[j - len1] + " - " + varsWorkspaceClass[j - len1], null,
+											varsWorkspace[j - len1]);
 								}
 								// The defined editor functions
 							} else if (j < len3) {
-								propo[j] = new CompletionProposal(scopedFunctions[j - len2], offset, 0, scopedFunctions[j - len2].length(), imageFunctionsEditor, scopedFunctions[j - len2]+" - editor function", null,
-										null);
+								propo[j] = new CompletionProposal(scopedFunctions[j - len2], offset, 0,
+										scopedFunctions[j - len2].length(), imageFunctionsEditor,
+										scopedFunctions[j - len2] + " - editor function", null, null);
 							} else {
 								// The defined editor variables
-								propo[j] = new CompletionProposal(scopedVars[j - len3], offset, 0, scopedVars[j - len3].length(), imageVariablesEditor, scopedVars[j - len3]+" - editor variable", null, null);
+								propo[j] = new CompletionProposal(scopedVars[j - len3], offset, 0,
+										scopedVars[j - len3].length(), imageVariablesEditor,
+										scopedVars[j - len3] + " - editor variable", null, null);
 
 							}
 						}
@@ -1383,8 +1518,7 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * Simply return all templates.
 	 * 
-	 * @param contextTypeId
-	 *            the context type, ignored in this implementation
+	 * @param contextTypeId the context type, ignored in this implementation
 	 * @return all templates
 	 */
 	protected Template[] getTemplates(String contextTypeId) {
@@ -1422,7 +1556,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 				/*
 				 * We need to extra include the '@' character for S4 class vars!
 				 */
-				if (!Character.isJavaIdentifierPart(ch) && (ch == '.') == false && (ch == '@') == false && (ch == ':') == false)
+				if (!Character.isJavaIdentifierPart(ch) && (ch == '.') == false && (ch == '@') == false
+						&& (ch == ':') == false)
 					break;
 				i--;
 			}
@@ -1436,10 +1571,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * Return the R context type that is supported by this plug-in.
 	 * 
-	 * @param viewer
-	 *            the viewer, ignored in this implementation
-	 * @param region
-	 *            the region, ignored in this implementation
+	 * @param viewer the viewer, ignored in this implementation
+	 * @param region the region, ignored in this implementation
 	 * @return the supported R context type
 	 */
 	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {
@@ -1449,8 +1582,7 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * Always return the default image.
 	 * 
-	 * @param template
-	 *            the template, ignored in this implementation
+	 * @param template the template, ignored in this implementation
 	 * @return the default template image
 	 */
 	protected Image getImage(Template template) {
@@ -1471,12 +1603,14 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 			return imageVariablesWorkspace;
 		}
 
-		else if (count >= defaultTemplatesLength && count < defaultTemplatesLength + splitVars.length + varsWorkspace.length) {
+		else if (count >= defaultTemplatesLength
+				&& count < defaultTemplatesLength + splitVars.length + varsWorkspace.length) {
 			count++;
 			return imageVariablesEditor;
 		}
 
-		else if (count >= defaultTemplatesLength + splitVars.length && count < defaultTemplatesLength + splitBuffScopedFun.length + splitVars.length + varsWorkspace.length) {
+		else if (count >= defaultTemplatesLength + splitVars.length && count < defaultTemplatesLength
+				+ splitBuffScopedFun.length + splitVars.length + varsWorkspace.length) {
 			count++;
 			ImageRegistry registry = TemplateEditorUI.getDefault().getImageRegistry();
 			Image image = registry.get(FIELD_IMAGE);
@@ -1493,7 +1627,8 @@ public class RCompletionProcessor extends TemplateCompletionProcessor {
 			ImageRegistry registry = TemplateEditorUI.getDefault().getImageRegistry();
 			Image image = registry.get(CALCULATED_TEMPLATE_IMAGE);
 			if (image == null) {
-				ImageDescriptor desc = TemplateEditorUI.imageDescriptorFromPlugin("com.eco.bio7.redit", CALCULATED_TEMPLATE_IMAGE);
+				ImageDescriptor desc = TemplateEditorUI.imageDescriptorFromPlugin("com.eco.bio7.redit",
+						CALCULATED_TEMPLATE_IMAGE);
 				registry.put(CALCULATED_TEMPLATE_IMAGE, desc);
 				image = registry.get(CALCULATED_TEMPLATE_IMAGE);
 			}

@@ -1,6 +1,9 @@
 package com.eco.bio7.reditor.antlr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.Token;
@@ -156,8 +159,9 @@ public class ErrorWarnMarkerCreation extends WorkspaceJob {
 							if (warn) {
 
 								try {
-									marker = resource.createMarker(IMarker.PROBLEM);
-									marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+									Map<String, ? super Object> attributesWarning = new HashMap<String, Object>();						   							        
+									//marker = resource.createMarker(IMarker.PROBLEM);
+									attributesWarning.put(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 									// marker.setAttribute(IMarker.PRIORITY,
 									// IMarker.PRIORITY_NORMAL);
 									// marker.setAttribute(IMarker.MESSAGE, "line "
@@ -166,23 +170,26 @@ public class ErrorWarnMarkerCreation extends WorkspaceJob {
 									// ":"
 									// +
 									// charPositionInLine + " " + msg);
-									marker.setAttribute(IMarker.MESSAGE, msg);
-									marker.setAttribute(IMarker.LINE_NUMBER, line);
-									marker.setAttribute(IMarker.LOCATION, lineOffsetStart + charPositionInLine);
+									attributesWarning.put(IMarker.MESSAGE, msg);
+									attributesWarning.put(IMarker.LINE_NUMBER, line);
+									attributesWarning.put(IMarker.LOCATION, lineOffsetStart + charPositionInLine);
 									if (quickFix != null) {
-										marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-										marker.setAttribute(IMarker.TEXT, quickFix);
-										marker.setAttribute("TOKEN_TEXT", offSymbol.getText());
-										marker.setAttribute("REPLACEMENT_TEXT", replacementText);
+										attributesWarning.put(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+										attributesWarning.put(IMarker.TEXT, quickFix);
+										attributesWarning.put("TOKEN_TEXT", offSymbol.getText());
+										attributesWarning.put("REPLACEMENT_TEXT", replacementText);
 									}
 									/*
 									 * This error message comes from the default ANTLR error parser!
 									 */
 									else {
-										marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_LOW);
-										marker.setAttribute(IMarker.TEXT, "NA");
+										attributesWarning.put(IMarker.PRIORITY, IMarker.PRIORITY_LOW);
+										attributesWarning.put(IMarker.TEXT, "NA");
 									}
-									createUnderlineMarker(marker);
+									createUnderlineMarker(attributesWarning);
+									
+									marker = resource.createMarker(IMarker.PROBLEM,attributesWarning);
+									
 								} catch (CoreException ex) {
                                     System.out.println(ex.getMessage());
 									//ex.printStackTrace();
@@ -190,9 +197,10 @@ public class ErrorWarnMarkerCreation extends WorkspaceJob {
 								warn = false;// reset warning flag!
 							} else {
 								try {
+									Map<String, ? super Object> attributesError = new HashMap<String, Object>();
 									// System.out.println(offSymbol.getText());
-									marker = resource.createMarker(IMarker.PROBLEM);
-									marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+									//marker = resource.createMarker(IMarker.PROBLEM);
+									attributesError.put(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 									// marker.setAttribute(IMarker.PRIORITY,
 									// IMarker.PRIORITY_NORMAL);
 									// marker.setAttribute(IMarker.MESSAGE, "line "
@@ -201,23 +209,24 @@ public class ErrorWarnMarkerCreation extends WorkspaceJob {
 									// ":"
 									// +
 									// charPositionInLine + " " + msg);
-									marker.setAttribute(IMarker.MESSAGE, msg);
-									marker.setAttribute(IMarker.LINE_NUMBER, line);
-									marker.setAttribute(IMarker.LOCATION, lineOffsetStart + charPositionInLine);
+									attributesError.put(IMarker.MESSAGE, msg);
+									attributesError.put(IMarker.LINE_NUMBER, line);
+									attributesError.put(IMarker.LOCATION, lineOffsetStart + charPositionInLine);
 									if (quickFix != null) {
-										marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-										marker.setAttribute(IMarker.TEXT, quickFix);
-										marker.setAttribute("TOKEN_TEXT", offSymbol.getText());
-										marker.setAttribute("REPLACEMENT_TEXT", replacementText);
+										attributesError.put(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+										attributesError.put(IMarker.TEXT, quickFix);
+										attributesError.put("TOKEN_TEXT", offSymbol.getText());
+										attributesError.put("REPLACEMENT_TEXT", replacementText);
 									}
 									/*
 									 * This error message comes from the default ANTLR error parser!
 									 */
 									else {
-										marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_LOW);
-										marker.setAttribute(IMarker.TEXT, "NA");
+										attributesError.put(IMarker.PRIORITY, IMarker.PRIORITY_LOW);
+										attributesError.put(IMarker.TEXT, "NA");
 									}
-									createUnderlineMarker(marker);
+									createUnderlineMarker(attributesError);
+									marker = resource.createMarker(IMarker.PROBLEM,attributesError);
 								} catch (CoreException ex) {
 									
 									System.out.println(ex.getMessage());
@@ -234,23 +243,23 @@ public class ErrorWarnMarkerCreation extends WorkspaceJob {
 
 	}
 
-	private void createUnderlineMarker(IMarker marker) throws CoreException {
+	private void createUnderlineMarker(Map<String, Object> attributes) throws CoreException {
 		/* Correct the underline error if start and stop index is equal! */
 		if (offSymbol.getStartIndex() == offSymbol.getStopIndex()) {
-			marker.setAttribute(IMarker.CHAR_START, offSymbol.getStartIndex());
-			marker.setAttribute(IMarker.CHAR_END, offSymbol.getStopIndex() + 1);
+			attributes.put(IMarker.CHAR_START, offSymbol.getStartIndex());
+			attributes.put(IMarker.CHAR_END, offSymbol.getStopIndex() + 1);
 
 		} else {
 			/* Correct the underline error if it is a linebreak! */
 			if (offSymbol.getText().equals(System.lineSeparator())) {
 
-				marker.setAttribute(IMarker.CHAR_START, offSymbol.getStartIndex() - 1);
-				marker.setAttribute(IMarker.CHAR_END, offSymbol.getStopIndex());
+				attributes.put(IMarker.CHAR_START, offSymbol.getStartIndex() - 1);
+				attributes.put(IMarker.CHAR_END, offSymbol.getStopIndex());
 			} else {
 				// System.out.println(offSymbol.getStartIndex()+"
 				// "+offSymbol.getStopIndex());
-				marker.setAttribute(IMarker.CHAR_START, offSymbol.getStartIndex());
-				marker.setAttribute(IMarker.CHAR_END, offSymbol.getStopIndex() + 1);
+				attributes.put(IMarker.CHAR_START, offSymbol.getStartIndex());
+				attributes.put(IMarker.CHAR_END, offSymbol.getStopIndex() + 1);
 			}
 		}
 	}

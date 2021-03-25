@@ -41,7 +41,7 @@ public class RCodePreferences extends FieldEditorPreferencePage implements IWork
 		addField(new BooleanFieldEditor("TYPED_CODE_COMPLETION", "Open code completion/templates when typing", getFieldEditorParent()));
 		addField(new StringFieldEditor("ACTIVATION_CHARS", "Activation chars (Restart to apply!)", -1, StringFieldEditor.VALIDATE_ON_KEY_STROKE, getFieldEditorParent()));
 		addField(new LabelFieldEditor("Use e.g. '3' if 'Open code completion/templates when typing' is enabled else use the default value(s)!", getFieldEditorParent()));
-		addField(new IntegerFieldEditor("ACTIVATION_AMOUNT_CHAR_COMPLETION", "Activate Templates after word length (Restart to apply!)", getFieldEditorParent()));
+		addField(new IntegerFieldEditor("ACTIVATION_AMOUNT_CHAR_COMPLETION", "Activate Templates after word length!", getFieldEditorParent()));
 		addField(new SpacerFieldEditor(getFieldEditorParent()));
 		addField(new LabelFieldEditor("Editor performance:", getFieldEditorParent()));
 		addField(new BooleanFieldEditor("EDITOR_TO_OUTLINE", "Show editor position in 'Outline' view", getFieldEditorParent()));
