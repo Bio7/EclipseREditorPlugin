@@ -238,8 +238,8 @@ public class RConfiguration extends TextSourceViewerConfiguration {
         assistant.setContentAssistProcessor(processorRoxygen,"R_COMMENT" );
         
 		assistant.enableAutoActivation(true);
-		assistant.setAutoActivationDelay(200);
-
+		assistant.setAutoActivationDelay(100);
+        assistant.enablePrefixCompletion(true);
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
