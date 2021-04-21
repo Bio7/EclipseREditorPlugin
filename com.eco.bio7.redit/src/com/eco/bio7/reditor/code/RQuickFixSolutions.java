@@ -16,7 +16,9 @@ import com.eco.bio7.reditor.antlr.Parse;
 import com.eco.bio7.reditor.antlr.ref.RRefPhaseListen;
 import com.eco.bio7.reditors.REditor;
 import com.eco.bio7.rpreferences.template.CalculateRProposals;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 
 public class RQuickFixSolutions {
 	private ISourceViewer viewer;
@@ -233,7 +235,7 @@ public class RQuickFixSolutions {
 			double max = Math.max(tokenText.length(), statistics[i].length());
 			double perct = round(1.0 - (dist / max), 2);
 			/* Add to a Pair to sort the distances! */
-			proposals.add(new Pair<String, Double>(statistics[i], perct));
+			proposals.add(new MutablePair<String, Double>(statistics[i], perct));
 		}
 		/* Sort the Levenshtein distances in descending order! */
 		sort(proposals);
@@ -251,7 +253,7 @@ public class RQuickFixSolutions {
 			double max = Math.max(tokenText.length(), splitBuffScopedFun[i].length());
 			double perct = round(1.0 - (dist / max), 2);
 			/* Add to a Pair to sort the distances! */
-			words.add(new Pair<String, Double>(splitBuffScopedFun[i], perct));
+			words.add(new MutablePair<String, Double>(splitBuffScopedFun[i], perct));
 		}
 
 		/* Sort the Levenshtein distances in descending order! */
