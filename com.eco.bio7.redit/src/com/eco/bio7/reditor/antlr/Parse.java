@@ -147,6 +147,9 @@ public class Parse {
 		if (inp == null) {
 			return;
 		}
+		if (dp==null) {
+			return;
+		}
 		if (dp.getDocument(inp) == null) {
 			return;
 		}
