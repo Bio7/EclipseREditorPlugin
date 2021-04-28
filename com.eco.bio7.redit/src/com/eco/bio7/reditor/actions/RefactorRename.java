@@ -10,10 +10,10 @@
  *******************************************************************************/
 package com.eco.bio7.reditor.actions;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.TokenStreamRewriter;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IResource;
@@ -201,7 +201,7 @@ public class RefactorRename implements IEditorActionDelegate {
 		IDocumentProvider dp = rEditor.getDocumentProvider();
 		IDocument doc = dp.getDocument(rEditor.getEditorInput());
 
-		ANTLRInputStream input = new ANTLRInputStream(doc.get());
+		CodePointCharStream input =  CharStreams.fromString(doc.get());
 		RLexer lexer = new RLexer(input);
 
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -215,7 +215,7 @@ public class RefactorRename implements IEditorActionDelegate {
 		// filter.addErrorListener(li);
 
 		filter.stream(); // call start rule: stream
-		tokens.reset();
+		tokens.seek(0);
 
 		RParser parser = new RParser(tokens);
 		parser.removeErrorListeners();

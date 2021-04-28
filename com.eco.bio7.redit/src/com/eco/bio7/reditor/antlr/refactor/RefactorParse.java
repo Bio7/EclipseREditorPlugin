@@ -1,9 +1,9 @@
 package com.eco.bio7.reditor.antlr.refactor;
 
 import java.util.HashSet;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import com.eco.bio7.reditor.antlr.RFilter;
@@ -39,14 +39,14 @@ public class RefactorParse {
 	/* Here we parse the text and test for possible errors! */
 	public boolean parseSource(String fullText,boolean captureId) {
 		boolean errors;
-		ANTLRInputStream input = new ANTLRInputStream(fullText);
+		CodePointCharStream input = CharStreams.fromString(fullText);
 		RLexer lexer = new RLexer(input);
 		tokens = new CommonTokenStream(lexer);
 		bufferTokenStream = new BufferedTokenStream(lexer);
 		RFilter filter = new RFilter(tokens);
 		filter.removeErrorListeners();
 		filter.stream(); // call start rule: stream
-		tokens.reset();
+		tokens.seek(0);
 		ParseErrorListener parseErrorListener = new ParseErrorListener();
 		parser = new RParser(tokens);
 

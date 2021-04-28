@@ -13,12 +13,11 @@ package com.eco.bio7.reditor.antlr;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.widgets.Display;
@@ -126,6 +125,18 @@ public class Parse {
 
 	public void parse() {
 
+		IDocumentProvider dp = editor.getDocumentProvider();
+		if (dp==null) {
+			return;
+		}
+		IEditorInput inp = editor.getEditorInput();
+		if (inp == null) {
+			return;
+		}
+		
+		if (dp.getDocument(inp) == null) {
+			return;
+		}
 		Vector<REditorOutlineNode> editorOldNodes = editor.nodes;
 		/* Create the category base node for the outline! */
 		editor.createNodes();
@@ -141,21 +152,10 @@ public class Parse {
 		 * 
 		 * } } }); deleteMarkerJob.setUser(true); deleteMarkerJob.schedule();
 		 */
-
-		IDocumentProvider dp = editor.getDocumentProvider();
-		IEditorInput inp = editor.getEditorInput();
-		if (inp == null) {
-			return;
-		}
-		if (dp==null) {
-			return;
-		}
-		if (dp.getDocument(inp) == null) {
-			return;
-		}
+		
 		IDocument doc = dp.getDocument(inp);
 
-		ANTLRInputStream input = new ANTLRInputStream(doc.get());
+		CodePointCharStream input =  CharStreams.fromString(doc.get());
 		RLexer lexer = new RLexer(input);
 
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -169,7 +169,7 @@ public class Parse {
 		// filter.addErrorListener(li);
 
 		filter.stream(); // call start rule: stream
-		tokens.reset();
+		tokens.seek(0);
 
 		RParser parser = new RParser(tokens);
 		parser.removeErrorListeners();
@@ -261,7 +261,7 @@ public class Parse {
 		IDocumentProvider dp = editor.getDocumentProvider();
 		IDocument doc = dp.getDocument(editor.getEditorInput());
 
-		ANTLRInputStream input = new ANTLRInputStream(doc.get());
+		CodePointCharStream input =  CharStreams.fromString(doc.get());
 		RLexer lexer = new RLexer(input);
 
 		tokens = new CommonTokenStream(lexer);
@@ -275,7 +275,7 @@ public class Parse {
 		// filter.addErrorListener(li);
 
 		filter.stream(); // call start rule: stream
-		tokens.reset();
+		tokens.seek(0);
 
 		RParser parser = new RParser(tokens);
 		parser.removeErrorListeners();
@@ -344,14 +344,14 @@ public class Parse {
 	 */
 	public boolean parseShellSource(String fullText, int offset) {
 		boolean errors;
-		ANTLRInputStream input = new ANTLRInputStream(fullText);
+		CodePointCharStream input =  CharStreams.fromString(fullText);
 		RLexer lexer = new RLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		// bufferTokenStream = new BufferedTokenStream(lexer);
 		RFilter filter = new RFilter(tokens);
 		filter.removeErrorListeners();
 		filter.stream(); // call start rule: stream
-		tokens.reset();
+		tokens.seek(0);
 		ParseErrorListener parseErrorListener = new ParseErrorListener();
 		RParser parser = new RParser(tokens);
 
