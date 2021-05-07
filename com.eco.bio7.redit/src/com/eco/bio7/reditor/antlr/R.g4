@@ -16,7 +16,7 @@ prog:   (   expr (';'|NL|EOF)// Added!
         )*
         EOF
     ;
-
+ 
 /*
 expr_or_assign
     :   expr ('<-'|'='|'<<-') expr_or_assign
@@ -29,7 +29,7 @@ expr:
     |   expr '[' sublist ']'	#e2
     |   expr ('::'|':::') expr	#e3
     |   expr ('$'|'@') expr	#e4
-    |   expr '^'<assoc=right> expr	#e5
+    |   expr POWER_OP<assoc=right> expr	#e5
     |   ('-'|'+') expr	#e6
     |   expr ':' expr	#e7
     |   expr USER_OP expr 	#e8// anything wrapped in %: '%' .* '%'
@@ -188,6 +188,8 @@ fragment LETTER  : [a-zA-Z] ;
 USER_OP :   '%' .*? '%' ;
 
 COMMENT :      '#' ~[\r\n]*  -> type(NL);
+
+POWER_OP : '^'|'**';
 
 // Match both UNIX and Windows newlines
 NL      :   '\r'? '\n' ;

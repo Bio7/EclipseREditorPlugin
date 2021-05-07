@@ -37,7 +37,7 @@ options { tokenVocab=R; }
 @members {
 protected int curlies = 0;
 }
-
+ 
 // TODO: MAKE THIS GET ONE COMMAND ONLY
 stream : (elem|NL|';')* EOF ;
 
@@ -83,8 +83,8 @@ atom:   'next' | 'break' | ID | STRING | HEX | INT | FLOAT | COMPLEX | 'NULL'
     |   'NA' | 'Inf' | 'NaN' | 'TRUE' | 'FALSE'
     ;
 
-op  :   '+'|'-'|'*'|'/'|'^'|'<'|'<='|'>='|'>'|'=='|'!='|'&'|'&&'|USER_OP|
+op  :   '+'|'-'|'*'|'/'|'<'|'<='|'>='|'>'|'=='|'!='|'&'|'&&'|USER_OP|
         'repeat'|'in'|'?'|'!'|'='|':'|'~'|'$'|'@'|'<-'|'->'|'<<-'|'->>'|'='|':='|'::'|':::'|
-        ','|'...'|'||'| '|'
+        ','|'...'|'||'| '|'|POWER_OP
     ;  
  
