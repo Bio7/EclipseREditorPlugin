@@ -169,6 +169,22 @@ public class ExtractInterfaceListener extends RBaseListener {
 		}
 
 	}
+	
+	/*
+	 * This is the detection of the pipe operator '|>'!
+	 * In the grammar file the operator must precede the function call!
+	 */
+	public void enterE43(RParser.E43Context ctx) {	
+		if (currentPipeToken != null) {
+				Token afterPipeOperator = ctx.expr(1).start;
+				if (afterPipeOperator == currentPipeToken) {
+					isInPipeFunction = true;
+					/* Here we get the name of the data (first element!) */
+					String pipeData = ctx.getStart().getText();
+					currentPipeData = pipeData;
+				}
+			}	
+	}
 
 	/*
 	 * This is the detection of the exp USER_OP exp expression grammar used for the

@@ -320,6 +320,29 @@ public class RRefPhaseListen extends RBaseListener {
 	}
 
 	/*
+	 * This is the detection of the pipe bind operator '=>'!
+	 */
+	public void enterE44(RParser.E44Context ctx) {
+
+	}
+
+	/*
+	 * This is the detection of the pipe operator '|>'! In the grammar file the
+	 * operator must precede the function call!
+	 */
+	public void enterE43(RParser.E43Context ctx) {
+		if (currentPipeToken != null) {
+			Token afterPipeOperator = ctx.expr(1).start;
+			if (afterPipeOperator == currentPipeToken) {
+				isInPipeFunction = true;
+				/* Here we get the name of the data (first element!) */
+				String pipeData = ctx.getStart().getText();
+				currentPipeData = pipeData;
+			}
+		}
+	}
+
+	/*
 	 * This is the detection of the exp USER_OP exp expression grammar used for the
 	 * pipe operator '%>%'!
 	 */
@@ -371,17 +394,23 @@ public class RRefPhaseListen extends RBaseListener {
 
 				String na = ctx.expr(1).getText();
 				if (na.equals("NA") || na.equals("na")) {
-					parser.notifyErrorListeners(to, "Warn20####Comparision syntax incorrect.####is.na(" + to.getText() + ")", null);
+					parser.notifyErrorListeners(to,
+							"Warn20####Comparision syntax incorrect.####is.na(" + to.getText() + ")", null);
 
 				} else if (na.equals("NULL") || na.equals("null")) {
-					parser.notifyErrorListeners(to, "Warn20####Comparision syntax incorrect.####is.null(" + to.getText() + ")", null);
+					parser.notifyErrorListeners(to,
+							"Warn20####Comparision syntax incorrect.####is.null(" + to.getText() + ")", null);
 				}
 
 				else if (na.equals("NaN")) {
-					parser.notifyErrorListeners(to, "Warn20####Comparision syntax incorrect.####is.nan(" + to.getText() + ")", null);
+					parser.notifyErrorListeners(to,
+							"Warn20####Comparision syntax incorrect.####is.nan(" + to.getText() + ")", null);
 				} else {
 
-					parser.notifyErrorListeners(to, "Warn21####Use identical function to test equality of two objects.####identical(" + to.getText() + "," + na + ")", null);
+					parser.notifyErrorListeners(to,
+							"Warn21####Use identical function to test equality of two objects.####identical("
+									+ to.getText() + "," + na + ")",
+							null);
 				}
 			}
 		}
@@ -403,7 +432,8 @@ public class RRefPhaseListen extends RBaseListener {
 			Token idNextToken = Utils.whitespaceTokenFilter(index, ctx.stop.getStopIndex(), tokens);
 			// System.out.println("Next Symbol= "+idNextToken.getText());
 			if (idNextToken != null) {
-				if (idNextToken.getText().equals("=") || idNextToken.getText().equals("<-") || idNextToken.getText().equals("<<-") || idNextToken.getText().equals("(")) {
+				if (idNextToken.getText().equals("=") || idNextToken.getText().equals("<-")
+						|| idNextToken.getText().equals("<<-") || idNextToken.getText().equals("(")) {
 					return;
 				}
 
@@ -426,7 +456,8 @@ public class RRefPhaseListen extends RBaseListener {
 							}
 						}
 
-						parser.notifyErrorListeners(tok, "Warn17####Variable not available?#### " + varName + " seems to be missing!", null);
+						parser.notifyErrorListeners(tok,
+								"Warn17####Variable not available?#### " + varName + " seems to be missing!", null);
 
 					} else {
 						if (var instanceof RFunctionSymbol) {
@@ -452,7 +483,8 @@ public class RRefPhaseListen extends RBaseListener {
 			boolean isNotCalled = finalVarDecl.contains(name);
 			if (isNotCalled) {
 
-				parser.notifyErrorListeners(firstToken, "Warn17####Variable " + name + " is defined but not used!", null);
+				parser.notifyErrorListeners(firstToken, "Warn17####Variable " + name + " is defined but not used!",
+						null);
 
 			}
 		}
@@ -497,7 +529,8 @@ public class RRefPhaseListen extends RBaseListener {
 					boolean isNotCalled = finalFuncDecl.contains(name);
 					if (isNotCalled) {
 
-						parser.notifyErrorListeners(st, "Warn17####Function " + name + " is defined but not called! \nProbably used as an argument!", null);
+						parser.notifyErrorListeners(st, "Warn17####Function " + name
+								+ " is defined but not called! \nProbably used as an argument!", null);
 
 					}
 
@@ -551,14 +584,14 @@ public class RRefPhaseListen extends RBaseListener {
 		String funcName = stop.getText();
 		/*
 		 * Here we set the current method call token (if we are in the parentheses) for
-		 * the pipe operator detection (E8)!
+		 * the pipe operator detection (E8, E43)!
 		 */
 		if (offsetCodeCompl >= startIndex && offsetCodeCompl <= stopIndex) {
 			currentPipeToken = stop;
 		}
 
 		/* Ignore functions without assigned names! */
-		if (funcName.equals("function")) {
+		if (funcName.equals("function") || funcName.equals("\\")) {
 			return;
 		}
 
@@ -587,7 +620,8 @@ public class RRefPhaseListen extends RBaseListener {
 
 				} else {
 					if (store.getBoolean("MISSING_FUNCTION")) {
-						parser.notifyErrorListeners(stop, "Warn16####Function not available?#### " + funcName + " seems to be missing!", null);
+						parser.notifyErrorListeners(stop,
+								"Warn16####Function not available?#### " + funcName + " seems to be missing!", null);
 					}
 
 				}
@@ -672,7 +706,8 @@ public class RRefPhaseListen extends RBaseListener {
 
 								}
 								if (store.getBoolean("CHECK_MISSING_FUNCTION_CALL_ARGS")) {
-									parser.notifyErrorListeners(stop, "Warn17####The following args are missing: " + str.toString(), null);
+									parser.notifyErrorListeners(stop,
+											"Warn17####The following args are missing: " + str.toString(), null);
 								}
 
 							}
@@ -683,7 +718,8 @@ public class RRefPhaseListen extends RBaseListener {
 								 * number of arguments!
 								 */
 								if (store.getBoolean("CHECK_EXCESSIVE_FUNCTION_CALL_ARGS")) {
-									parser.notifyErrorListeners(stop, "Err12####To many args in function call (unused arguments)!", null);
+									parser.notifyErrorListeners(stop,
+											"Err12####To many args in function call (unused arguments)!", null);
 								}
 							}
 							/*
@@ -725,7 +761,10 @@ public class RRefPhaseListen extends RBaseListener {
 												 * Text is splitted with'####' and can have three different messages!
 												 * Here we use two '####'!
 												 */
-												parser.notifyErrorListeners(tempFuncCallArray[i], "Warn18####Wrong function call parameter name!####" + expectedArg + "", null);
+												parser.notifyErrorListeners(tempFuncCallArray[i],
+														"Warn18####Wrong function call parameter name!####"
+																+ expectedArg + "",
+														null);
 											}
 
 										}
@@ -747,7 +786,8 @@ public class RRefPhaseListen extends RBaseListener {
 
 							}
 							if (store.getBoolean("CHECK_MISSING_FUNCTION_CALL_ARGS")) {
-								parser.notifyErrorListeners(stop, "Warn17####The following args are missing: " + str2.toString(), null);
+								parser.notifyErrorListeners(stop,
+										"Warn17####The following args are missing: " + str2.toString(), null);
 							}
 
 							/*
@@ -766,11 +806,12 @@ public class RRefPhaseListen extends RBaseListener {
 
 					}
 					/*
-					 * Check the variable assignment in function calls. Offer a quickfix to replace '<-' with '='!
+					 * Check the variable assignment in function calls. Offer a quickfix to replace
+					 * '<-' with '='!
 					 */
 					if (store.getBoolean("WRONG_FUNCTION_CALL_OPERATOR_ASSIGNMENT")) {
 						if (argText.isEmpty() == false) {
-							//Token tempFuncCallArray[] = new Token[callSize];
+							// Token tempFuncCallArray[] = new Token[callSize];
 							for (int i = 0; i < callSize; i++) {
 
 								ParseTree tree = sub.get(i).getChild(0);
@@ -783,7 +824,9 @@ public class RRefPhaseListen extends RBaseListener {
 										ParseTree parseTree = tr.getChild(1);
 										if (parseTree.getText().equals("<-")) {
 											Token tok = tokens.get(parseTree.getSourceInterval().a);
-											parser.notifyErrorListeners(tok, "Warn22####Possibly wrong assignment operator in function call argument.####=", null);
+											parser.notifyErrorListeners(tok,
+													"Warn22####Possibly wrong assignment operator in function call argument.####=",
+													null);
 										}
 
 									}
@@ -802,7 +845,8 @@ public class RRefPhaseListen extends RBaseListener {
 				else {
 					if (argText.isEmpty() == false) {
 						if (store.getBoolean("CHECK_FOR_EMPTY_ARG_FUNCTION"))
-							parser.notifyErrorListeners(stop, "Warn17####The function definiton has no arguments to call! ", null);
+							parser.notifyErrorListeners(stop,
+									"Warn17####The function definiton has no arguments to call! ", null);
 						// System.out.println("calltext " + callText);
 					}
 				}
@@ -817,7 +861,8 @@ public class RRefPhaseListen extends RBaseListener {
 
 		}
 
-		if (funcName.equals("class") || funcName.equals("setClass") || funcName.equals("setRefClass") || funcName.equals("R6Class")) {
+		if (funcName.equals("class") || funcName.equals("setClass") || funcName.equals("setRefClass")
+				|| funcName.equals("R6Class")) {
 
 			setCurrentScopeFromOffsetFunctionCall(ctx);
 		}
@@ -839,7 +884,7 @@ public class RRefPhaseListen extends RBaseListener {
 				 * First we check the path of the Bio7 preferences then the most common default
 				 * paths of the OS!
 				 */
-				/*We replace quotations here when we calculate a possible Java path!*/
+				/* We replace quotations here when we calculate a possible Java path! */
 				lib = lib.replace("\"", "");
 				try {
 					if (Util.isWindows()) {
@@ -848,7 +893,8 @@ public class RRefPhaseListen extends RBaseListener {
 						if (Files.exists(path) || Files.exists(path2)) {
 							return;
 						} else {
-							parser.notifyErrorListeners(ctx.sublist().stop, "Warn23####The library is not installed: " + lib, null);
+							parser.notifyErrorListeners(ctx.sublist().stop,
+									"Warn23####The library is not installed: " + lib, null);
 						}
 					} else if (Util.isMac()) {
 						path = Paths.get(storeBio7Plugin.getString("InstallLocation") + "/" + lib);
@@ -856,7 +902,8 @@ public class RRefPhaseListen extends RBaseListener {
 						if (Files.exists(path) || Files.exists(path2)) {
 							return;
 						} else {
-							parser.notifyErrorListeners(ctx.sublist().stop, "Warn23####The library is not installed: " + lib, null);
+							parser.notifyErrorListeners(ctx.sublist().stop,
+									"Warn23####The library is not installed: " + lib, null);
 						}
 					} else if (Util.isLinux()) {
 						Path path3 = null;
@@ -868,12 +915,14 @@ public class RRefPhaseListen extends RBaseListener {
 						if (Files.exists(path) || Files.exists(path2) || Files.exists(path3) || Files.exists(path4)) {
 							return;
 						} else {
-							parser.notifyErrorListeners(ctx.sublist().stop, "Warn23####The library is not installed: " + lib, null);
+							parser.notifyErrorListeners(ctx.sublist().stop,
+									"Warn23####The library is not installed: " + lib, null);
 						}
 					}
 				} catch (InvalidPathException e) {
-					// We do not fire an error message here in rare cases the path without quotations is invalid!
-					//e.printStackTrace();
+					// We do not fire an error message here in rare cases the path without
+					// quotations is invalid!
+					// e.printStackTrace();
 				}
 
 			}

@@ -33,6 +33,8 @@ expr:
     |   ('-'|'+') expr	#e6
     |   expr ':' expr	#e7
     |   expr USER_OP expr 	#e8// anything wrapped in %: '%' .* '%'
+    |	expr PIPE expr #e43
+    |	expr PIPEBIND expr #e44
     |   expr ('*'|'/') expr	#e9
     |   expr ('+'|'-') expr	#e10
     |   expr ('>'|'>='|'<'|'<='|'=='|'!=') expr	#e11
@@ -43,7 +45,7 @@ expr:
     |   expr '~' expr	#e16 
     |   expr ('<-'|'<<-'|'='|'->'|'->>'|':=') expr	#e17VariableDeclaration
     |   '{' exprlist '}' 	#e18// compound statement
-    |   'function' '(' formlist? ')' expr #e19DefFunction// define function
+    |   ('function'|'\\') '(' formlist? ')' expr #e19DefFunction// define function
     |   expr '(' sublist ')'   	#e20CallFunction           // call function
     |   'if' '(' expr ')' expr	#e21
     |   'if' '(' expr ')' expr 'else' expr	#e22
@@ -71,7 +73,7 @@ expr:
     //|   expr '(' sublist    							#err2
     |   expr '(' sublist ')' extra=')'   				#err3
     //|   'function' '(' formlist?  expr 					#err4
-    |   'function' '(' formlist? ')' extra=')' expr 	#err5
+    |   ('function'|'\\') '(' formlist? ')' extra=')' expr 	#err5
     //|   'if' '(' extra='(' expr ')'  expr								#err6
     |   'if' '(' expr ')' extra=')'  expr				#err7
     |   expr '[[' sublist ']' ']' extra=']'	    		#err8
@@ -116,6 +118,13 @@ sub :   expr
 				  
 RAW_STRING
  : [rR] '"' INNER_RAW_STRING '"'
+ ;
+ 
+PIPE
+ : '|>'
+ ;
+ PIPEBIND
+ : '=>'
  ;
 
 fragment INNER_RAW_STRING

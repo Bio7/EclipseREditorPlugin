@@ -324,7 +324,9 @@ public class RBaseListen extends RBaseListener {
 
 	private void createAnonymousFunction(RParser.E19DefFunctionContext ctx, int lineMethod) {
 		/* Create a new scope and add the function (symbol)! */
-		RFunctionSymbol function = new RFunctionSymbol(ctx.start.getText(), currentScope, ctx.formlist(), scopeNumber);
+		/*Replace the shorthand notation for anonymous functions!*/
+		String afunText = ctx.start.getText().replace("\\", "function");
+		RFunctionSymbol function = new RFunctionSymbol(afunText, currentScope, ctx.formlist(), scopeNumber);
 		currentScope.define(function); // Define function in current scope
 		scopeNew.put(ctx, function);
 		currentScope = function;
@@ -332,7 +334,7 @@ public class RBaseListen extends RBaseListener {
 		/* Get the current scope stack elements! */
 		DeclCallStore st = storeDeclCall.peek();
 		/* add the method to the call set! */
-		st.methDecl.add(ctx.start.getText());
+		st.methDecl.add(afunText);
 		storeDeclCall.push(new DeclCallStore());
 		/* Here we create the outline nodes in the Outline view! */
 		if (methods.size() == 0) {
@@ -508,7 +510,7 @@ public class RBaseListen extends RBaseListener {
 		String isFunc = ctx.expr(1).start.getText();
 		// System.out.println("fun detetcted?= " + ctx.expr(1).getText() + "Is
 		// Type! " + ctx.expr(1).getClass());
-		if (isFunc.equals("function") == false) {
+		if (isFunc.equals("function") == false&&isFunc.equals("\\") == false) {
 
 			int lineStart = firstToken.getStartIndex();
 

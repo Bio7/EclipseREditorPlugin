@@ -222,6 +222,30 @@ public interface RListener extends ParseTreeListener {
 	 */
 	void exitE41(RParser.E41Context ctx);
 	/**
+	 * Enter a parse tree produced by the {@code e44}
+	 * labeled alternative in {@link RParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterE44(RParser.E44Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code e44}
+	 * labeled alternative in {@link RParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitE44(RParser.E44Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code e43}
+	 * labeled alternative in {@link RParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterE43(RParser.E43Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code e43}
+	 * labeled alternative in {@link RParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitE43(RParser.E43Context ctx);
+	/**
 	 * Enter a parse tree produced by the {@code e19DefFunction}
 	 * labeled alternative in {@link RParser#expr}.
 	 * @param ctx the parse tree
