@@ -113,8 +113,7 @@ public class SaveFileCreateSourceTemplate {
 							+ ".tif\" , drivername = \"GTiff\", type = \"Float32\")");
 
 				} else if (extension.equals(filterExt[15])) {
-					doc.replace(offset, length, "library(rgdal);writeOGR("+var+", fname =\"" + dirPath
-							+ "\" , driver = \"ESRI Shapefile\")");
+					doc.replace(offset, length, "library(sf);sfobject<-st_as_sf("+var+");st_write(sfobject,\"" +  fileWithoutExt+".shp\")");
 
 				} else if (extension.equals(filterExt[16])) {
 					extension = "*.Rhistory";

@@ -149,7 +149,7 @@ public class DatabaseView extends ViewPart {
 		container.setLayout(new GridLayout(2, false));
 
 		Label lblStoredProfiles = new Label(containerConnection, SWT.NONE);
-		lblStoredProfiles.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, false, false, 3, 1));
+		lblStoredProfiles.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, false, 3, 1));
 		lblStoredProfiles.setText("Stored Profiles:");
 
 		comboProfiles = new List(containerConnection, SWT.BORDER | SWT.V_SCROLL);
@@ -354,7 +354,7 @@ public class DatabaseView extends ViewPart {
 		btnAddConnectionAs.setText("Add Connection Profile");
 
 		Button btnNewButton = new Button(composite_2, SWT.NONE);
-		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -456,7 +456,7 @@ public class DatabaseView extends ViewPart {
 		// combo.addListener(SWT.MouseDown, listener);
 
 		btnUseSshTunnel = new Button(containerConnection, SWT.CHECK);
-		btnUseSshTunnel.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1));
+		btnUseSshTunnel.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1));
 		btnUseSshTunnel.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -473,7 +473,7 @@ public class DatabaseView extends ViewPart {
 
 		Label lblPreview = new Label(containerConnection, SWT.NONE);
 		lblPreview.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		lblPreview.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblPreview.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblPreview.setText("Preview:");
 		new Label(containerConnection, SWT.NONE);
 
@@ -491,7 +491,7 @@ public class DatabaseView extends ViewPart {
 		previewTextfield.setLayoutData(gd_previewTextfield);
 
 		Button btnInsertInEditor = new Button(containerConnection, SWT.NONE);
-		btnInsertInEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1));
+		btnInsertInEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 		btnInsertInEditor.setToolTipText("Inserts the preview code in the active editor!");
 		btnInsertInEditor.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -587,7 +587,7 @@ public class DatabaseView extends ViewPart {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 
 		Button btnNewButton_1 = new Button(composite, SWT.NONE);
-		btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		btnNewButton_1.setToolTipText("Creates a connection to the database!");
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 
@@ -628,12 +628,12 @@ public class DatabaseView extends ViewPart {
 
 			}
 		});
-		btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnNewButton_2.setText("Disconnect");
 		new Label(containerConnection, SWT.NONE);
 
 		Label lblDisconnectCode = new Label(containerConnection, SWT.NONE);
-		lblDisconnectCode.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblDisconnectCode.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblDisconnectCode.setText("Custom Disconnect Code:");
 		new Label(containerConnection, SWT.NONE);
 
@@ -1073,7 +1073,7 @@ public class DatabaseView extends ViewPart {
 	 * Initialize the menu.
 	 */
 	private void initializeMenu() {
-		IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
+		//IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
 	}
 
 	@Override
