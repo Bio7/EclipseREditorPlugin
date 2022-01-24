@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import static com.eco.bio7.rpreferences.template.RCompletionProcessor.*;
@@ -59,29 +61,52 @@ public class CalculateRProposals {
 		String tempPath;
 		/* Load the new calculated templates else use the default templates! */
 		if (startupTemplate == false) {
-			URL fileURL = bundle.getEntry("rcompletion/rproposals.txt");
-			File file = null;
+			URL url = FileLocator.find(bundle, new Path("rcompletion/rproposals.txt"), null);		
+			File file = null;			
 			try {
-				file = new File(FileLocator.resolve(fileURL).toURI());
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
+				URL fileUrl = FileLocator.toFileURL(url);
+				
+				file = new File(fileUrl.getPath());
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+			//URL fileURL = bundle.getEntry("rcompletion/rproposals.txt");
+			//File file = null;
+			/*
+			 * try { //See:
+			 * https://stackoverflow.com/questions/4571346/how-to-encode-url-to-avoid-
+			 * special-characters-in-java/4571518#4571518 URL url =
+			 * FileLocator.resolve(fileURL); URI uri = new URI(url.getProtocol(),
+			 * url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(),
+			 * url.getQuery(), url.getRef()); file = new File(uri.toASCIIString()); } catch
+			 * (URISyntaxException e1) { e1.printStackTrace(); } catch (IOException e1) {
+			 * e1.printStackTrace(); }
+			 */
 			tempPath = file.getAbsolutePath();
 
 			// tempPath = s.getString("pathTempR") + "rproposals.txt";
 		} else {
-			URL fileURL = bundle.getEntry("rcompletion/rproposalsDefault.txt");
-			tempPath = fileURL.toExternalForm();
-			File file = null;
+			URL url = FileLocator.find(bundle, new Path("rcompletion/rproposalsDefault.txt"), null);		
+			File file = null;			
 			try {
-				file = new File(FileLocator.resolve(fileURL).toURI());
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
+				URL fileUrl = FileLocator.toFileURL(url);
+				
+				file = new File(fileUrl.getPath());
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+			/*
+			 * URL fileURL = bundle.getEntry("rcompletion/rproposalsDefault.txt"); tempPath
+			 * = fileURL.toExternalForm(); File file = null; //See:
+			 * https://stackoverflow.com/questions/4571346/how-to-encode-url-to-avoid-
+			 * special-characters-in-java/4571518#4571518 try { URL url =
+			 * FileLocator.resolve(fileURL); URI uri = new URI(url.getProtocol(),
+			 * url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(),
+			 * url.getQuery(), url.getRef());
+			 * 
+			 * file = new File(uri.toASCIIString()); } catch (URISyntaxException e1) {
+			 * e1.printStackTrace(); } catch (IOException e1) { e1.printStackTrace(); }
+			 */
 			tempPath = file.getAbsolutePath();
 
 			// tempPath = s.getString("pathTempR") + "rproposalsDefault.txt";
