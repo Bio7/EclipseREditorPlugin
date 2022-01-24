@@ -820,7 +820,7 @@ public class DatabaseView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Program.launch("https://github.com/PowerShell/Win32-OpenSSH/releases.html");
+				Program.launch("https://github.com/PowerShell/Win32-OpenSSH/releases");
 			}
 
 		});
@@ -834,7 +834,7 @@ public class DatabaseView extends ViewPart {
 
 	protected void okPressed() {
 
-		/* Create the default template with custom code as präfix if not empty! */
+		/* Create the default template with custom code as prï¿½fix if not empty! */
 		finalTemplate = createTemplate(false) + "\n#Close connection!\n" + textDisconnect.getText();
 
 		IEditorPart editore = (IEditorPart) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
