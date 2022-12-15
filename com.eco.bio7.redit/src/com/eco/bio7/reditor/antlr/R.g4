@@ -69,6 +69,7 @@ expr:
     |   'TRUE'	#e40
     |   'FALSE'	#e41
     |	RAW_STRING #e42
+    |   PLACEHOLDER #e43
     | 	'(' expr ')' extra=')' 							#err1
     //|   expr '(' sublist    							#err2
     |   expr '(' sublist ')' extra=')'   				#err3
@@ -125,6 +126,10 @@ PIPE
  ;
  PIPEBIND
  : '=>'
+ ;
+ 
+ PLACEHOLDER
+ : '_'
  ;
 
 fragment INNER_RAW_STRING
