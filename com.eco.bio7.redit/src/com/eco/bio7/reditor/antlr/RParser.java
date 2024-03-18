@@ -1,4 +1,4 @@
-// Generated from R.g4 by ANTLR 4.10.1
+// Generated from R.g4 by ANTLR 4.13.1
 package com.eco.bio7.reditor.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class RParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.10.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -112,6 +112,7 @@ public class RParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ProgContext extends ParserRuleContext {
 		public List<TerminalNode> EOF() { return getTokens(RParser.EOF); }
 		public TerminalNode EOF(int i) {
@@ -151,7 +152,7 @@ public class RParser extends Parser {
 			setState(22);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (((((_la - 9)) & ~0x3f) == 0 && ((1L << (_la - 9)) & ((1L << (T__8 - 9)) | (1L << (T__9 - 9)) | (1L << (T__19 - 9)) | (1L << (T__24 - 9)) | (1L << (T__31 - 9)) | (1L << (T__33 - 9)) | (1L << (T__34 - 9)) | (1L << (T__35 - 9)) | (1L << (T__37 - 9)) | (1L << (T__39 - 9)) | (1L << (T__41 - 9)) | (1L << (T__42 - 9)) | (1L << (T__43 - 9)) | (1L << (T__44 - 9)) | (1L << (T__45 - 9)) | (1L << (T__46 - 9)) | (1L << (T__47 - 9)) | (1L << (T__48 - 9)) | (1L << (T__49 - 9)) | (1L << (T__50 - 9)) | (1L << (T__51 - 9)) | (1L << (RAW_STRING - 9)) | (1L << (PLACEHOLDER - 9)) | (1L << (HEX - 9)) | (1L << (INT - 9)) | (1L << (FLOAT - 9)) | (1L << (COMPLEX - 9)) | (1L << (STRING - 9)) | (1L << (ID - 9)) | (1L << (NL - 9)) | (1L << (UNKNOWN - 9)))) != 0)) {
+			while (((((_la - 9)) & ~0x3f) == 0 && ((1L << (_la - 9)) & 1512734480111044611L) != 0)) {
 				{
 				setState(20);
 				_errHandler.sync(this);
@@ -230,6 +231,7 @@ public class RParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ExprContext extends ParserRuleContext {
 		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -241,6 +243,7 @@ public class RParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err11Context extends ExprContext {
 		public Token extra;
 		public ExprlistContext exprlist() {
@@ -256,6 +259,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr11(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E31Context extends ExprContext {
 		public TerminalNode STRING() { return getToken(RParser.STRING, 0); }
 		public E31Context(ExprContext ctx) { copyFrom(ctx); }
@@ -268,6 +272,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE31(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E30Context extends ExprContext {
 		public TerminalNode ID() { return getToken(RParser.ID, 0); }
 		public E30Context(ExprContext ctx) { copyFrom(ctx); }
@@ -280,6 +285,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE30(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E32Context extends ExprContext {
 		public TerminalNode HEX() { return getToken(RParser.HEX, 0); }
 		public TerminalNode INT() { return getToken(RParser.INT, 0); }
@@ -293,6 +299,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE32(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E35Context extends ExprContext {
 		public TerminalNode COMPLEX() { return getToken(RParser.COMPLEX, 0); }
 		public E35Context(ExprContext ctx) { copyFrom(ctx); }
@@ -305,6 +312,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE35(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E34Context extends ExprContext {
 		public TerminalNode FLOAT() { return getToken(RParser.FLOAT, 0); }
 		public E34Context(ExprContext ctx) { copyFrom(ctx); }
@@ -317,6 +325,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE34(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E37Context extends ExprContext {
 		public E37Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -328,6 +337,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE37(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err18Context extends ExprContext {
 		public Token extra;
 		public TerminalNode ID() { return getToken(RParser.ID, 0); }
@@ -347,6 +357,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr18(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E36Context extends ExprContext {
 		public E36Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -358,6 +369,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE36(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E39Context extends ExprContext {
 		public E39Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -369,6 +381,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE39(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E38Context extends ExprContext {
 		public E38Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -380,6 +393,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE38(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err16Context extends ExprContext {
 		public Token extra;
 		public List<ExprContext> expr() {
@@ -398,6 +412,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr16(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E40Context extends ExprContext {
 		public E40Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -409,6 +424,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE40(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E17VariableDeclarationContext extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -426,6 +442,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE17VariableDeclaration(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err22Context extends ExprContext {
 		public UnknownsContext unknowns() {
 			return getRuleContext(UnknownsContext.class,0);
@@ -440,6 +457,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr22(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E42Context extends ExprContext {
 		public TerminalNode RAW_STRING() { return getToken(RParser.RAW_STRING, 0); }
 		public E42Context(ExprContext ctx) { copyFrom(ctx); }
@@ -452,6 +470,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE42(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E41Context extends ExprContext {
 		public E41Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -463,6 +482,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE41(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E44Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -481,6 +501,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE44(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E43Context extends ExprContext {
 		public TerminalNode PLACEHOLDER() { return getToken(RParser.PLACEHOLDER, 0); }
 		public List<ExprContext> expr() {
@@ -500,6 +521,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE43(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E19DefFunctionContext extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -517,6 +539,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE19DefFunction(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E23ForLoopContext extends ExprContext {
 		public TerminalNode ID() { return getToken(RParser.ID, 0); }
 		public List<ExprContext> expr() {
@@ -535,6 +558,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE23ForLoop(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err3Context extends ExprContext {
 		public Token extra;
 		public ExprContext expr() {
@@ -553,6 +577,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr3(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err1Context extends ExprContext {
 		public Token extra;
 		public ExprContext expr() {
@@ -568,6 +593,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr1(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E11Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -585,6 +611,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE11(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E20CallFunctionContext extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -602,6 +629,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE20CallFunction(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E10Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -619,6 +647,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE10(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E13Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -636,6 +665,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE13(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E12Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -650,6 +680,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE12(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E15Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -664,6 +695,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE15(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E14Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -681,6 +713,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE14(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E16Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -698,6 +731,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE16(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E18Context extends ExprContext {
 		public ExprlistContext exprlist() {
 			return getRuleContext(ExprlistContext.class,0);
@@ -712,6 +746,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE18(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err9Context extends ExprContext {
 		public Token extra;
 		public ExprContext expr() {
@@ -730,6 +765,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr9(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err8Context extends ExprContext {
 		public Token extra;
 		public ExprContext expr() {
@@ -748,6 +784,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr8(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err7Context extends ExprContext {
 		public Token extra;
 		public List<ExprContext> expr() {
@@ -766,6 +803,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr7(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class Err5Context extends ExprContext {
 		public Token extra;
 		public ExprContext expr() {
@@ -784,6 +822,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitErr5(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E22Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -801,6 +840,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE22(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E21Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -818,6 +858,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE21(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E24Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -835,6 +876,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE24(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E26Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -849,6 +891,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE26(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E25Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -863,6 +906,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE25(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E28Context extends ExprContext {
 		public E28Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -874,6 +918,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE28(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E27Context extends ExprContext {
 		public E27Context(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -885,6 +930,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE27(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E1Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -902,6 +948,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE1(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E29Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -916,6 +963,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE29(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E2Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -933,6 +981,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE2(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E3Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -950,6 +999,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE3(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E4Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -967,6 +1017,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE4(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E5Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -985,6 +1036,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE5(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E6Context extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -999,6 +1051,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE6(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E7Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -1016,6 +1069,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE7(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E8Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -1034,6 +1088,7 @@ public class RParser extends Parser {
 			if ( listener instanceof RListener ) ((RListener)listener).exitE8(this);
 		}
 	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class E9Context extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -1710,7 +1765,7 @@ public class RParser extends Parser {
 						if (!(precpred(_ctx, 43))) throw new FailedPredicateException(this, "precpred(_ctx, 43)");
 						setState(169);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << T__16) | (1L << T__17) | (1L << T__18))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1032192L) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {
@@ -1782,7 +1837,7 @@ public class RParser extends Parser {
 						if (!(precpred(_ctx, 37))) throw new FailedPredicateException(this, "precpred(_ctx, 37)");
 						setState(181);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << T__29) | (1L << T__30))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 4227858432L) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {
@@ -1908,6 +1963,7 @@ public class RParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class UnknownsContext extends ParserRuleContext {
 		public List<TerminalNode> UNKNOWN() { return getTokens(RParser.UNKNOWN); }
 		public TerminalNode UNKNOWN(int i) {
@@ -1967,6 +2023,7 @@ public class RParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ExprlistContext extends ParserRuleContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -2053,7 +2110,7 @@ public class RParser extends Parser {
 					setState(231);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					if (((((_la - 9)) & ~0x3f) == 0 && ((1L << (_la - 9)) & ((1L << (T__8 - 9)) | (1L << (T__9 - 9)) | (1L << (T__19 - 9)) | (1L << (T__24 - 9)) | (1L << (T__31 - 9)) | (1L << (T__33 - 9)) | (1L << (T__34 - 9)) | (1L << (T__35 - 9)) | (1L << (T__37 - 9)) | (1L << (T__39 - 9)) | (1L << (T__41 - 9)) | (1L << (T__42 - 9)) | (1L << (T__43 - 9)) | (1L << (T__44 - 9)) | (1L << (T__45 - 9)) | (1L << (T__46 - 9)) | (1L << (T__47 - 9)) | (1L << (T__48 - 9)) | (1L << (T__49 - 9)) | (1L << (T__50 - 9)) | (1L << (T__51 - 9)) | (1L << (RAW_STRING - 9)) | (1L << (PLACEHOLDER - 9)) | (1L << (HEX - 9)) | (1L << (INT - 9)) | (1L << (FLOAT - 9)) | (1L << (COMPLEX - 9)) | (1L << (STRING - 9)) | (1L << (ID - 9)) | (1L << (UNKNOWN - 9)))) != 0)) {
+					if (((((_la - 9)) & ~0x3f) == 0 && ((1L << (_la - 9)) & 1224504103959332867L) != 0)) {
 						{
 						setState(230);
 						expr(0);
@@ -2088,6 +2145,7 @@ public class RParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class FormlistContext extends ParserRuleContext {
 		public List<FormContext> form() {
 			return getRuleContexts(FormContext.class);
@@ -2147,6 +2205,7 @@ public class RParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class FormContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(RParser.ID, 0); }
 		public ExprContext expr() {
@@ -2211,6 +2270,7 @@ public class RParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class SublistContext extends ParserRuleContext {
 		public List<SubContext> sub() {
 			return getRuleContexts(SubContext.class);
@@ -2270,6 +2330,7 @@ public class RParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class SubContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
