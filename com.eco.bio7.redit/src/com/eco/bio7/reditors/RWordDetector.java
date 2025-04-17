@@ -11,9 +11,6 @@
 package com.eco.bio7.reditors;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.text.rules.IWordDetector;
 
 /**

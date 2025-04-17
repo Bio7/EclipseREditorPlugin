@@ -29,7 +29,7 @@ import com.eco.bio7.util.Util;
 
 public class CreateRFileFromClipboard implements IEditorActionDelegate {
 
-	private ISelection selection;
+	protected ISelection selection;
 	private IEditorPart targetEditor;
 
 	public void setActiveEditor(final IAction action, final IEditorPart targetEditor) {

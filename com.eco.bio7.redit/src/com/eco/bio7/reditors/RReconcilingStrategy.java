@@ -5,13 +5,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -91,7 +88,7 @@ public class RReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 		private Object fLockObject;
 
 		/** The document to operate on. */
-		private IDocument fDocument;
+		protected IDocument fDocument;
 
 		/*
 		 * (non-Javadoc)

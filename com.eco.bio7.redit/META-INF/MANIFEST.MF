@@ -4,7 +4,7 @@ Created-By: 1.6.0_02-b05 (Sun Microsystems Inc.)
 Bundle-ManifestVersion: 2
 Bundle-Name: R Plug-in
 Bundle-SymbolicName: com.eco.bio7.redit;singleton:=true
-Bundle-Version: 2.5.2
+Bundle-Version: 3.6.0
 Bundle-Activator: com.eco.bio7.reditor.Bio7REditorPlugin
 Bundle-Vendor: ECO
 Bundle-Localization: plugin
@@ -25,7 +25,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.ui.css.swt.theme,
  com.eco.bio7.util,
  com.eco.bio7.browser,
- com.eco.bio7.scenebuilder,
  com.eco.bio7.libs,
  Bundled_R
 Eclipse-LazyStart: true

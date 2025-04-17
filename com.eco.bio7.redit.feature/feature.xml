@@ -33,7 +33,6 @@
       <import plugin="org.eclipse.ltk.core.refactoring"/>
       <import plugin="com.eco.bio7.util"/>
       <import plugin="com.eco.bio7.browser"/>
-      <import plugin="com.eco.bio7.scenebuilder"/>
       <import plugin="com.eco.bio7.libs"/>
       <import plugin="Bundled_R"/>
       <import plugin="org.eclipse.e4.ui.css.swt.theme"/>
@@ -42,8 +41,6 @@
 
    <plugin
          id="com.eco.bio7.redit"
-         download-size="0"
-         install-size="0"
          version="2.5.2"/>
 
 </feature>

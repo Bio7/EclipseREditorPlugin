@@ -18,13 +18,15 @@ import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
+
 import com.eco.bio7.reditor.Bio7REditorPlugin;
 
 /**
